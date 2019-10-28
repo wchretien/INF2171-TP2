@@ -58,6 +58,7 @@ public class batnav {
         }
         printTableau();
         Pep8.stro(MSG_TIRER);
+        verifFeux();
     }
 
     private static char[] entreesPlacements(){
@@ -160,13 +161,12 @@ public class batnav {
         return verifColonne(colonne) && verifRangee(rangee);
     }
 
-    //a continuer, utliser recursivite.
+    //TODO, utliser recursivite et methodes de verifications hors champs horizontal et vertical.
     private static void feuVolonter(char colonne, char rangee){
 
     }
 
     public static void main (String [] args){
         initJeu();
-        verifFeux();
     }
 }
