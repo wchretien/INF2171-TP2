@@ -16,7 +16,7 @@ public class batnav {
     private static int nbFeuxEntre = 0;
     private static int nbEspaces = 0;
 
-    private static void initJeu(){
+    private static void initJeu() {
         for (int i = 0; i < TABLEAU_CASES.length; i++) {
             TABLEAU_CASES[i] = '~';
         }
@@ -26,7 +26,7 @@ public class batnav {
         verifPlacement();
     }
 
-    private static void printTableau(){
+    private static void printTableau() {
         Pep8.stro(POS_COL);
         for (int i = 0; i < 9; i++) {
             Pep8.stro((i + 1) + "|");
@@ -42,19 +42,23 @@ public class batnav {
         int i = 0;
 
         do {
-            if ((nbBateauxEntre == 0 || nbEspaces >= nbBateauxEntre) && (verifGrandeur(descripteurBateaux[i]) &&
-                    verifOrientation(descripteurBateaux[i + 1]) && verifColonne(descripteurBateaux[i + 2]) &&
+            if ((nbBateauxEntre == 0 || nbEspaces >= nbBateauxEntre) &&
+                    (verifGrandeur(descripteurBateaux[i]) &&
+                    verifOrientation(descripteurBateaux[i + 1]) &&
+                    verifColonne(descripteurBateaux[i + 2]) &&
                     verifRangee(descripteurBateaux[i + 3]))){
-                    nbBateauxEntre++;
-                    i += 4;
-            }else{
+                nbBateauxEntre++;
+                i += 4;
+            } else {
                 Pep8.stro(MSG_ERR_PLACE);
                 descripteurBateaux = entreesPlacements();
             }
-        }while (descripteurBateaux[i] != '\n');
-        for(int j = 0; j < nbBateauxEntre; j++){
-            placementBateau(grandeurEnNb(descripteurBateaux[j * 4]), descripteurBateaux[j * 4 + 1],
-                    colonneEnNb(descripteurBateaux[j * 4 + 2]), rangeeEnNb(descripteurBateaux[j * 4 + 3]));
+        } while (descripteurBateaux[i] != '\n');
+        for (int j = 0; j < nbBateauxEntre; j++){
+            placementBateau(grandeurEnNb(descripteurBateaux[j * 4]),
+                descripteurBateaux[j * 4 + 1],
+                colonneEnNb(descripteurBateaux[j * 4 + 2]),
+                rangeeEnNb(descripteurBateaux[j * 4 + 3]));
         }
         printTableau();
         Pep8.stro(MSG_TIRER);
@@ -66,27 +70,27 @@ public class batnav {
         char temp;
         int i = 0;
         nbEspaces = 0;
-        do{
+        do {
             temp = Pep8.chari();
             if(temp != ' ') {
                 descripteur[i] = temp;
                 i++;
-            }else{
+            } else {
                 nbEspaces++;
             }
-        }while (temp != '\n');
+        } while (temp != '\n');
         return descripteur;
     }
 
-    private static boolean verifGrandeur(char grandeur){
+    private static boolean verifGrandeur(char grandeur) {
         return grandeur == 'p' || grandeur == 'm' || grandeur == 'g';
     }
 
-    private static boolean verifOrientation(char orientation){
+    private static boolean verifOrientation(char orientation) {
         return orientation == 'h' || orientation == 'v';
     }
 
-    private static boolean verifColonne(char colonne){
+    private static boolean verifColonne(char colonne) {
         return colonne >= 'A' && colonne <= 'R';
     }
 
@@ -94,17 +98,17 @@ public class batnav {
         return rangee >= '1' && rangee <= '9';
     }
 
-    private static int colonneEnNb(char colonne){
+    private static int colonneEnNb(char colonne) {
         return colonne - 'A';
     }
 
-    private static int rangeeEnNb(char rangee){
+    private static int rangeeEnNb(char rangee) {
         return rangee - '1';
     }
 
-    private static int grandeurEnNb(char grandeur){
+    private static int grandeurEnNb(char grandeur) {
         int nbCases;
-        switch (grandeur){
+        switch (grandeur) {
             case 'p': nbCases =1;
                 break;
             case 'm': nbCases = 3;
@@ -115,58 +119,62 @@ public class batnav {
         return nbCases;
     }
 
-    private static void placementBateau(int grandeur, char orientation, int colonne, int rangee) {
+    private static void placementBateau(int grandeur, char orientation,
+            int colonne, int rangee) {
         char orientationChar = 'v';
-        if(orientation == 'h'){
+        if (orientation == 'h') {
             orientationChar = '>';
         }
         for (int i = 0; i < grandeur; i++) {
-            if(orientation == 'h') {
-                if (verifHorsChampsH(i, colonne, rangee) && (TABLEAU_CASES[colonne + rangee * 18 + i] == '~')){
+            if (orientation == 'h') {
+                if (verifHorsChampsH(i, colonne, rangee) &&
+                        (TABLEAU_CASES[colonne + rangee * 18 + i] == '~')) {
                     TABLEAU_CASES[colonne + rangee * 18 + i] = orientationChar;
                 }
-            }else if(verifHorsChampsV(i, colonne, rangee) && (TABLEAU_CASES[colonne + rangee * 18 + i * 18] == '~')){
+            } else if (verifHorsChampsV(i, colonne, rangee) &&
+                    (TABLEAU_CASES[colonne + rangee * 18 + i * 18] == '~')) {
                 TABLEAU_CASES[colonne + rangee * 18 + i * 18] = orientationChar;
             }
         }
     }
 
-    private static boolean verifHorsChampsH(int i, int colonne, int rangee){
+    private static boolean verifHorsChampsH(int i, int colonne, int rangee) {
         return colonne + rangee * 18 + i < (rangee + 1) * 18;
     }
 
-    private static boolean verifHorsChampsV(int i, int colonne, int rangee){
+    private static boolean verifHorsChampsV(int i, int colonne, int rangee) {
         return colonne + rangee * 18 + i * 18 < 162;
     }
 
-    private static void verifFeux(){
+    private static void verifFeux() {
         char[] descripteurFeux = entreesPlacements();
         int i = 0;
 
         do {
-            if ((nbFeuxEntre == 0 || nbEspaces >= nbFeuxEntre) && verifCoups(descripteurFeux[i], descripteurFeux[i + 1])) {
+            if ((nbFeuxEntre == 0 || nbEspaces >= nbFeuxEntre) &&
+                    verifCoups(descripteurFeux[i], descripteurFeux[i + 1])) {
                 nbFeuxEntre++;
                 i += 2;
-            }else {
+            } else {
                 Pep8.stro(MSG_ERR_TIRER);
                 descripteurFeux = entreesPlacements();
             }
         } while (descripteurFeux[i] != '\n');
-        for(int j = 0; j < nbBateauxEntre; j++){
-            feuVolonter(descripteurFeux[j * 2], descripteurFeux[j * 2 + 1]);
+        for (int j = 0; j < nbBateauxEntre; j++) {
+            feuAVolonte(descripteurFeux[j * 2], descripteurFeux[j * 2 + 1]);
         }
     }
 
-    private static boolean verifCoups(char colonne, char rangee){
+    private static boolean verifCoups(char colonne, char rangee) {
         return verifColonne(colonne) && verifRangee(rangee);
     }
 
     //TODO, utliser recursivite et methodes de verifications hors champs horizontal et vertical.
-    private static void feuVolonter(char colonne, char rangee){
+    private static void feuAVolonte(char colonne, char rangee) {
 
     }
 
-    public static void main (String [] args){
+    public static void main (String [] args) {
         initJeu();
     }
 }
