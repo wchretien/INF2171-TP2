@@ -12,9 +12,6 @@ public class batnav {
     private static final String MSG_ERR_PLACE = "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
     private static final char [] TABLEAU_CASES = new char [162];
-    private static int nbBateauxEntre = 0;
-    private static int nbFeuxEntre = 0;
-    private static int nbEspaces = 0;
 
     private static void initJeu() {
         for (int i = 0; i < TABLEAU_CASES.length; i++) {
@@ -39,21 +36,29 @@ public class batnav {
 
     private static void verifPlacement(){
         char [] descripteurBateaux = entreesPlacements();
+        char separateurBateaux;
+        int nbBateauxEntre = 0;
+        int nbEspaces = verifNbEspaces(descripteurBateaux);
         int i = 0;
 
         do {
-            if ((nbBateauxEntre == 0 || nbEspaces >= nbBateauxEntre) &&
+            if ((nbBateauxEntre == 0 || nbEspaces == nbBateauxEntre) &&
                     (verifGrandeur(descripteurBateaux[i]) &&
                     verifOrientation(descripteurBateaux[i + 1]) &&
                     verifColonne(descripteurBateaux[i + 2]) &&
                     verifRangee(descripteurBateaux[i + 3]))){
                 nbBateauxEntre++;
-                i += 4;
+                separateurBateaux = descripteurBateaux[i + 4];
+                i += 5;
             } else {
                 Pep8.stro(MSG_ERR_PLACE);
                 descripteurBateaux = entreesPlacements();
+                nbEspaces = verifNbEspaces(descripteurBateaux);
+                nbBateauxEntre = 0;
+                separateurBateaux = 0;
+                i = 0;
             }
-        } while (descripteurBateaux[i] != '\n');
+        } while (separateurBateaux != '\n');
         for (int j = 0; j < nbBateauxEntre; j++){
             placementBateau(grandeurEnNb(descripteurBateaux[j * 4]),
                 descripteurBateaux[j * 4 + 1],
@@ -62,23 +67,30 @@ public class batnav {
         }
         printTableau();
         Pep8.stro(MSG_TIRER);
-        verifFeux();
+        verifFeux(nbBateauxEntre, nbEspaces);
+    }
+
+    private static int verifNbEspaces(char[] descripteurBateaux) {
+        int nbEspaces = 0;
+        int i = 0;
+
+        while (descripteurBateaux[i] != '\n') {
+            if (descripteurBateaux[i] == ' ') {
+                nbEspaces++;
+            }
+            i++;
+        }
+        return nbEspaces;
     }
 
     private static char[] entreesPlacements(){
         char[] descripteur = new char[900];
-        char temp;
         int i = 0;
-        nbEspaces = 0;
+
         do {
-            temp = Pep8.chari();
-            if(temp != ' ') {
-                descripteur[i] = temp;
-                i++;
-            } else {
-                nbEspaces++;
-            }
-        } while (temp != '\n');
+            descripteur[i] = Pep8.chari();
+            i++;
+        } while (descripteur[i - 1] != '\n');
         return descripteur;
     }
 
@@ -146,8 +158,9 @@ public class batnav {
         return colonne + rangee * 18 + i * 18 < 162;
     }
 
-    private static void verifFeux() {
+    private static void verifFeux(int nbBateauxEntre, int nbEspaces) {
         char[] descripteurFeux = entreesPlacements();
+        int nbFeuxEntre = 0;
         int i = 0;
 
         do {
