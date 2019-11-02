@@ -67,7 +67,7 @@ public class batnav {
         }
         printTableau();
         Pep8.stro(MSG_TIRER);
-        verifFeux(nbBateauxEntre, nbEspaces);
+        verifFeux(nbBateauxEntre);
     }
 
     private static int verifNbEspaces(char[] descripteurBateaux) {
@@ -158,21 +158,28 @@ public class batnav {
         return colonne + rangee * 18 + i * 18 < 162;
     }
 
-    private static void verifFeux(int nbBateauxEntre, int nbEspaces) {
+    private static void verifFeux(int nbBateauxEntre) {
         char[] descripteurFeux = entreesPlacements();
+        char separateurFeux;
         int nbFeuxEntre = 0;
+        int nbEspaces = verifNbEspaces(descripteurFeux);
         int i = 0;
 
         do {
-            if ((nbFeuxEntre == 0 || nbEspaces >= nbFeuxEntre) &&
+            if ((nbFeuxEntre == 0 || nbEspaces == nbFeuxEntre) &&
                     verifCoups(descripteurFeux[i], descripteurFeux[i + 1])) {
                 nbFeuxEntre++;
-                i += 2;
+                separateurFeux = descripteurFeux[i + 2];
+                i += 3;
             } else {
                 Pep8.stro(MSG_ERR_TIRER);
                 descripteurFeux = entreesPlacements();
+                nbEspaces = verifNbEspaces(descripteurFeux);
+                separateurFeux = 0;
+                nbFeuxEntre = 0;
+                i = 0;
             }
-        } while (descripteurFeux[i] != '\n');
+        } while (separateurFeux != '\n');
         for (int j = 0; j < nbBateauxEntre; j++) {
             feuAVolonte(descripteurFeux[j * 2], descripteurFeux[j * 2 + 1]);
         }
