@@ -229,11 +229,11 @@ public class batnav {
         boolean placementValide = true;
         for (int i = 0; i < grandeur; i++) {
             if (orientation == '>') {
-                if (!verifierPosition(colonne + i, rangee) ||
+                if (!verifierHorsChamps(colonne + i, rangee) ||
                         (TABLEAU_CASES[colonne + rangee * 18 + i] != '~')) {
                     placementValide = false;
                 }
-            } else if (!verifierPosition(colonne, rangee + i) ||
+            } else if (!verifierHorsChamps(colonne, rangee + i) ||
                     (TABLEAU_CASES[colonne + rangee * 18 + i * 18] != '~')) {
                 placementValide = false;
             }
@@ -268,11 +268,11 @@ public class batnav {
      * @param rangee
      * @return
      */
-    private static boolean verifierPosition(int colonne, int rangee) {
+    private static boolean verifierHorsChamps(int colonne, int rangee) {
         return (colonne + rangee * 18 < (rangee + 1) * 18)
                 && (colonne + rangee * 18 >= 18 + (rangee - 1) * 18)
                 && (colonne + rangee * 18 < 162)
-                && (colonne + rangee * 18 > 0);
+                && (colonne + rangee * 18 >= 0);
     }
 
     /**
@@ -322,7 +322,7 @@ public class batnav {
      * @param rangee
      */
     private static void placerFeu(int colonne, int rangee) {
-        if (verifierPosition(colonne, rangee)){
+        if (verifierHorsChamps(colonne, rangee)){
             if (verifierBateauPresent(colonne, rangee)){
                 TABLEAU_CASES[colonne + rangee * 18] = '*';
                 placerFeu(colonne + 1, rangee);
@@ -365,8 +365,10 @@ public class batnav {
      *
      */
     private static void solPartie() {
+        char [] descripteurFin;
         Pep8.stro(MSG_FIN);
-        if (Pep8.chari() == 10) {
+        descripteurFin = creerDescripteur();
+        if (descripteurFin[0] == '\n') {
             initJeu();
         } else {
             Pep8.stro(MSG_REVOIR);
