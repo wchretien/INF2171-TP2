@@ -62,7 +62,7 @@ public class batnav {
         for (int i = 0; i < 9; i++) {
             Pep8.stro((i + 1) + "|");
             for (int j = 0; j < 18; j++) {
-                Pep8.charo(TABLEAU_CASES[j + i * 18]);
+                Pep8.charo(TABLEAU_CASES[j + mult(i, 18)]);
             }
             Pep8.stro("|\n");
         }
@@ -97,10 +97,10 @@ public class batnav {
         } while (separateurBateaux != '\n');
 
         for (i = 0; i < nbBateaux; i++) {
-            placerBateau(changerNbGrandeur(descripteurBateaux[i * 5]),
-                changerCharOrien(descripteurBateaux[i * 5 + 1]),
-                changerNbColonne(descripteurBateaux[i * 5 + 2]),
-                changerNbRangee(descripteurBateaux[i * 5 + 3]));
+            placerBateau(changerNbGrandeur(descripteurBateaux[mult(i, 5)]),
+                changerCharOrien(descripteurBateaux[mult(i, 5) + 1]),
+                changerNbColonne(descripteurBateaux[mult(i, 5) + 2]),
+                changerNbRangee( descripteurBateaux[mult(i, 5) + 3]));
         }
     }
 
@@ -118,14 +118,21 @@ public class batnav {
         if (verifierPlacementBateau(grandeur, orientation, colonne, rangee)) {
             if (orientation == '>') {
                 for (int i = 0; i < grandeur; i++) {
-                    TABLEAU_CASES[colonne + rangee * 18 + i] = orientation;
+                    TABLEAU_CASES[colonne + mult(rangee, 18) + i] = orientation;
                 }
             } else {
                 for (int i = 0; i < grandeur; i++) {
-                    TABLEAU_CASES[colonne + rangee * 18 + i * 18] = orientation;
+                    TABLEAU_CASES[colonne + mult(rangee, 18) + mult(i, 18)] = orientation;
                 }
             }
         }
+    }
+
+
+    private static int mult(int a, int b) {
+        int resultat = 0;
+        for (int i = 0; i < b; i++) resultat += a;
+        return resultat;
     }
 
 
@@ -204,7 +211,8 @@ public class batnav {
      */
     private static void retrouverFeux(char[] descripteurFeux, int nbFeux) {
         for (int i = 0; i < nbFeux; i++) {
-            placerFeux(changerNbColonne(descripteurFeux[i * 3]), changerNbRangee(descripteurFeux[i * 3 + 1]));
+            placerFeux(changerNbColonne(descripteurFeux[mult(i, 3)]),
+                       changerNbRangee( descripteurFeux[mult(i, 3) + 1]));
             printTableau();
         }
     }
@@ -222,13 +230,13 @@ public class batnav {
     private static void placerFeux(int colonne, int rangee) {
         if (verifierHorsChamps(colonne, rangee)) {
             if (verifierBateauPresent(colonne, rangee)) {
-                TABLEAU_CASES[colonne + rangee * 18] = '*';
+                TABLEAU_CASES[colonne + mult(rangee, 18)] = '*';
                 placerFeux(colonne + 1, rangee);
                 placerFeux(colonne - 1, rangee);
                 placerFeux(colonne, rangee + 1);
                 placerFeux(colonne, rangee - 1);
-            } else if (TABLEAU_CASES[colonne + rangee * 18] != '*') {
-                TABLEAU_CASES[colonne + rangee * 18] = 'o';
+            } else if (TABLEAU_CASES[colonne + mult(rangee, 18)] != '*') {
+                TABLEAU_CASES[colonne + mult(rangee, 18)] = 'o';
             }
         }
     }
@@ -332,11 +340,11 @@ public class batnav {
         for (int i = 0; i < grandeur; i++) {
             if (orientation == '>') {
                 if (!verifierHorsChamps(colonne + i, rangee) ||
-                        (TABLEAU_CASES[colonne + rangee * 18 + i] != '~')) {
+                        (TABLEAU_CASES[colonne + mult(rangee, 18) + i] != '~')) {
                     placementValide = false;
                 }
             } else if (!verifierHorsChamps(colonne, rangee + i) ||
-                    (TABLEAU_CASES[colonne + rangee * 18 + i * 18] != '~')) {
+                    (TABLEAU_CASES[colonne + mult(rangee, 18) + mult(i, 18)] != '~')) {
                 placementValide = false;
             }
         }
@@ -415,7 +423,8 @@ public class batnav {
      * @return si un bateau est present a cet endroit.
      */
     private static boolean verifierBateauPresent(int colonne, int rangee) {
-        return TABLEAU_CASES[colonne + rangee * 18] == 'v' || TABLEAU_CASES[colonne + rangee * 18] == '>';
+        return TABLEAU_CASES[colonne + mult(rangee, 18)] == 'v' ||
+               TABLEAU_CASES[colonne + mult(rangee, 18)] == '>';
     }
 
 
@@ -427,10 +436,10 @@ public class batnav {
      * @return si la position est a l'interieur du tableau du jeu ou non.
      */
     private static boolean verifierHorsChamps(int colonne, int rangee) {
-        return (colonne + rangee * 18 < (rangee + 1) * 18)
-                && (colonne + rangee * 18 >= 18 + (rangee - 1) * 18)
-                && (colonne + rangee * 18 < 162)
-                && (colonne + rangee * 18 >= 0);
+        return (colonne + mult(rangee, 18) < mult(rangee + 1, 18))
+                && (colonne + mult(rangee, 18) >= 18 + mult(rangee - 1, 18))
+                && (colonne + mult(rangee, 18) < 162)
+                && (colonne + mult(rangee, 18) >= 0);
     }
 
 
