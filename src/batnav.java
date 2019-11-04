@@ -6,7 +6,7 @@
  *
  * @author William Chretien, Code permanent : CHRW15109406
  *
- * @author 
+ * @author Ricardo Ruy Valle-Mena, Code permanent : VALR29129407
  *
  * @version 2019-11-03
  */
