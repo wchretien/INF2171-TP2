@@ -1,8 +1,8 @@
 /**
- * Cette classe contient un main et des methodes pour jouer au jeu de bataille navale.
- * Le jeu est joué par un seul joueur. Le joueur commence par placer des navires sur
- * une grille, puis il leur tire dessus.
- * Egalement, cette classe est facilement transposable en Pep/8.
+ * Cette classe contient un main et des methodes pour jouer au jeu de bataille
+ * navale. Le jeu est joué par un seul joueur. Le joueur commence par placer des
+ * navires sur une grille, puis il leur tire dessus. Egalement, cette classe est
+ * facilement transposable en Pep/8.
  *
  * @author William Chretien,       Code permanent : CHRW15109406
  *
@@ -12,7 +12,7 @@
  */
 public class batnav {
 
-    //Constantes
+    // Constantes
     private static final String MSG_BIENV = "Bienvenue au jeu de bataille navale!\n\n";
     private static final String MSG_ENTRER = "Entrer la description et la position des bateaux\nselon le format suivant," +
             " separes par des espaces:\ntaille[p/m/g] orientation[h/v] colonne[A-R] rangee[1-9]\nex: ghC4 mvM2 phK9\n";
@@ -33,8 +33,8 @@ public class batnav {
 
 
     /**
-     * Initialise le jeu en remplissant le tableau principal de cases considerees vides. Ensuite, solicite le joueur
-     * aux placements de bateaux.
+     * Initialise le jeu en remplissant le tableau principal de cases considerees
+     * vides. Ensuite, solicite le joueur aux placements de bateaux.
      */
     private static void initJeu() {
         for (int i = 0; i < TABLEAU_CASES.length; i++) {
@@ -63,10 +63,11 @@ public class batnav {
 
 
     /**
-     * Verifie que les descriptions des bateaux entres par l'utilisateur sont conformes a l'enonce. C'est a dire qu'il y
-     * a seulement un espace entre chaque descripteur de bateaux et que ce descripteur ait 4 caracteres. Le nombre
-     * d'espaces que l'utilisateur doit rentrer est `nbBateaux` - 1 et ceux-ci doivent etre entre chaque description de
-     * bateaux.
+     * Verifie que les descriptions des bateaux entres par l'utilisateur sont
+     * conformes a l'enonce. C'est a dire qu'il y a seulement un espace entre chaque
+     * descripteur de bateaux et que ce descripteur ait 4 caracteres. Le nombre
+     * d'espaces que l'utilisateur doit rentrer est `nbBateaux` - 1 et ceux-ci
+     * doivent etre entre chaque description de bateaux.
      */
     private static void verifierDescriptionBateaux(){
         char [] descripteurBateaux = creerDescripteur();
@@ -98,13 +99,14 @@ public class batnav {
 
 
     /**
-     * Divise un descripteur de facon de retrouver la description de chacun des bateaux entres.
+     * Divise un descripteur de facon de retrouver la description de chacun des
+     * bateaux entres.
      *
      * @param descripteurBateaux un tableau de plusieurs descriptions de bateaux.
-     * @param nbBateaux le nombre de bateaux que le descripteur contient.
+     * @param nbBateaux          le nombre de bateaux que le descripteur contient.
      */
     private static void retrouverBateaux(char [] descripteurBateaux, int nbBateaux) {
-        for (int j = 0; j < nbBateaux; j++){
+        for (int j = 0; j < nbBateaux; j++) {
             placerBateaux(changerNbGrandeur(descripteurBateaux[j * 5]),
                     changerCharOrien(descripteurBateaux[j * 5 + 1]),
                     changerNbColonne(descripteurBateaux[j * 5 + 2]),
@@ -115,13 +117,13 @@ public class batnav {
 
 
     /**
-     * Place un bateau dans le tableau en changeant le charactere representant l'eau par celui de l'orientation du
-     * bateau.
+     * Place un bateau dans le tableau en changeant le charactere representant l'eau
+     * par celui de l'orientation du bateau.
      *
-     * @param grandeur la grandeur que couvrira le bateau.
+     * @param grandeur    la grandeur que couvrira le bateau.
      * @param orientation l'orientation du bateau.
-     * @param colonne la colonne dont le bateau commence.
-     * @param rangee la rangee dont le bateau commence.
+     * @param colonne     la colonne dont le bateau commence.
+     * @param rangee      la rangee dont le bateau commence.
      */
     private static void placerBateaux(int grandeur, char orientation, int colonne, int rangee) {
         if (verifierPlacementBateau(grandeur, orientation, colonne, rangee)) {
@@ -141,7 +143,7 @@ public class batnav {
     /**
      * Solicite l'utilisateur a entrer les feux a tirer sur les bateaux.
      */
-    private static void solFeux () {
+    private static void solFeux() {
         printTableau();
         Pep8.stro(MSG_TIRER);
         while (verifierBateauPresent()) {
@@ -152,9 +154,11 @@ public class batnav {
 
 
     /**
-     * Verifie que les feux entres par l'utilisateur sont conformes a l'enonce. C'est a dire qu'il y a seulement un
-     * espace entre chaque descripteur de feux et que ce descripteur ait 2 caracteres. Le nombre d'espaces
-     * que l'utilisateur doit rentrer est `nbFeux` - 1 et ceux-ci doivent etre place entre chaque description de feux.
+     * Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
+     * C'est a dire qu'il y a seulement un espace entre chaque descripteur de feux
+     * et que ce descripteur ait 2 caracteres. Le nombre d'espaces que l'utilisateur
+     * doit rentrer est `nbFeux` - 1 et ceux-ci doivent etre place entre chaque
+     * description de feux.
      */
     private static void verifierDescriptionFeux() {
         char[] descripteurFeux = creerDescripteur();
@@ -184,12 +188,13 @@ public class batnav {
 
 
     /**
-     * Divise un descripteur de facon de retrouver la description de chacun des feux entres.
+     * Divise un descripteur de facon de retrouver la description de chacun des feux
+     * entres.
      *
      * @param descripteurFeux un tableau de plusieurs descriptions de feux.
-     * @param nbFeux le nombre de feux que le descripteur contient.
+     * @param nbFeux          le nombre de feux que le descripteur contient.
      */
-    private static void retrouverFeux(char [] descripteurFeux, int nbFeux) {
+    private static void retrouverFeux(char[] descripteurFeux, int nbFeux) {
         for (int i = 0; i < nbFeux; i++) {
             placerFeux(changerNbColonne(descripteurFeux[i * 3]), changerNbRangee(descripteurFeux[i * 3 + 1]));
             printTableau();
@@ -198,22 +203,23 @@ public class batnav {
 
 
     /**
-     * Place un feu dans le tableau en changeant le charactere representant l'eau ou bateaux par celui d'un feu rate
-     * ou touche. Un bateau touche par un feu cree 4 debris chacun similaire a l'effet d'un feu, on l'utilise donc de la
-     * recursion pour creer cette effet a ces cases.
+     * Place un feu dans le tableau en changeant le charactere representant l'eau ou
+     * bateaux par celui d'un feu rate ou touche. Un bateau touche par un feu cree 4
+     * debris chacun similaire a l'effet d'un feu, on l'utilise donc de la recursion
+     * pour creer cette effet a ces cases.
      *
      * @param colonne la position du feu par rapport a la colonne.
-     * @param rangee la position du feu par rapport a la rangee.
+     * @param rangee  la position du feu par rapport a la rangee.
      */
     private static void placerFeux(int colonne, int rangee) {
-        if (verifierHorsChamps(colonne, rangee)){
-            if (verifierBateauPresent(colonne, rangee)){
+        if (verifierHorsChamps(colonne, rangee)) {
+            if (verifierBateauPresent(colonne, rangee)) {
                 TABLEAU_CASES[colonne + rangee * 18] = '*';
                 placerFeux(colonne + 1, rangee);
                 placerFeux(colonne - 1, rangee);
                 placerFeux(colonne, rangee + 1);
                 placerFeux(colonne, rangee - 1);
-            } else if (TABLEAU_CASES[colonne + rangee * 18] != '*'){
+            } else if (TABLEAU_CASES[colonne + rangee * 18] != '*') {
                 TABLEAU_CASES[colonne + rangee * 18] = 'o';
             }
         }
@@ -225,7 +231,7 @@ public class batnav {
      *
      * @return un tableau contenant tous les caracteres de la phrase entree.
      */
-    private static char[] creerDescripteur(){
+    private static char[] creerDescripteur() {
         char[] descripteur = new char[900];
         int i = 0;
 
@@ -253,7 +259,8 @@ public class batnav {
 
 
     /**
-     * Change le caractere de la colonne pour sa valeur en int, facilitant le calcul des positions.
+     * Change le caractere de la colonne pour sa valeur en int, facilitant le calcul
+     * des positions.
      *
      * @param colonne la colonne a changer en int.
      * @return la valeur de la colonne en int.
@@ -264,7 +271,8 @@ public class batnav {
 
 
     /**
-     * Change le caractere de la rangee pour sa valeur en int, facilitant le calcul des positions.
+     * Change le caractere de la rangee pour sa valeur en int, facilitant le calcul
+     * des positions.
      *
      * @param rangee la rangee a changer en int.
      * @return la valeur de la rangee en int.
@@ -275,7 +283,8 @@ public class batnav {
 
 
     /**
-     * Change le caractere de la grandeur pour sa valeur en int, facilitant la position des bateaux.
+     * Change le caractere de la grandeur pour sa valeur en int, facilitant la
+     * position des bateaux.
      *
      * @param grandeur la grandeur a changer en int.
      * @return la valeur de la grandeur en int.
@@ -295,8 +304,9 @@ public class batnav {
 
 
     /**
-     * Change le caractere de l'orientation pour un caractere plus representatif visuellement, facilitant la comprehension
-     * de la position des bateaux dans le tableau.
+     * Change le caractere de l'orientation pour un caractere plus representatif
+     * visuellement, facilitant la comprehension de la position des bateaux dans le
+     * tableau.
      *
      * @param orientation l'orientation dont on veut changer son caractere.
      * @return le caractere representatif de l'orientation.
@@ -306,17 +316,18 @@ public class batnav {
         if (orientation == 'h') {
             orientationAffichage = '>';
         }
-        return  orientationAffichage;
+        return orientationAffichage;
     }
 
 
     /**
-     * Verifie qu'un bateau peut etre entre dans le tableau et qu'il ne rentre pas en collision avec un autre.
+     * Verifie qu'un bateau peut etre entre dans le tableau et qu'il ne rentre pas
+     * en collision avec un autre.
      *
-     * @param grandeur la grandeur du bateau.
+     * @param grandeur    la grandeur du bateau.
      * @param orientation l'orientation du bateau.
-     * @param colonne la position en colonne du bateau.
-     * @param rangee la position en rangee du bateau.
+     * @param colonne     la position en colonne du bateau.
+     * @param rangee      la position en rangee du bateau.
      * @return si le bateau peut etre place a cette endroit.
      */
     private static boolean verifierPlacementBateau(int grandeur, char orientation,
@@ -338,7 +349,8 @@ public class batnav {
 
 
     /**
-     * Verifie si le caractere entre par l'utilisateur representant la grandeur est valide.
+     * Verifie si le caractere entre par l'utilisateur representant la grandeur est
+     * valide.
      *
      * @param grandeur
      * @return
@@ -349,7 +361,8 @@ public class batnav {
 
 
     /**
-     * Verifie si le caractere entre par l'utilisateur representant l'orientation est valide.
+     * Verifie si le caractere entre par l'utilisateur representant l'orientation
+     * est valide.
      *
      * @param orientation
      * @return
@@ -360,7 +373,8 @@ public class batnav {
 
 
     /**
-     * Verifie si le caractere entre par l'utilisateur representant la colonne est valide.
+     * Verifie si le caractere entre par l'utilisateur representant la colonne est
+     * valide.
      *
      * @param colonne
      * @return
@@ -371,7 +385,8 @@ public class batnav {
 
 
     /**
-     * Verifie si le caractere entre par l'utilisateur representant la rangee est valide.
+     * Verifie si le caractere entre par l'utilisateur representant la rangee est
+     * valide.
      *
      * @param rangee
      * @return
@@ -403,7 +418,7 @@ public class batnav {
      * Verifie si un bateau est present a un endroit specifique dans le tableau.
      *
      * @param colonne la position du bateau en colonne.
-     * @param rangee la position du bateau en rangee.
+     * @param rangee  la position du bateau en rangee.
      * @return si un bateau est present a cet endroit.
      */
     private static boolean verifierBateauPresent(int colonne, int rangee) {
@@ -415,7 +430,7 @@ public class batnav {
      * Verifie si une position colonne/rangee est a l'interieur du tableau du jeu.
      *
      * @param colonne la position en colonne.
-     * @param rangee la position en rangee.
+     * @param rangee  la position en rangee.
      * @return si la position est a l'interieur du tableau du jeu ou non.
      */
     private static boolean verifierHorsChamps(int colonne, int rangee) {
