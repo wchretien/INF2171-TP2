@@ -1,5 +1,7 @@
 /**
  * Cette classe contient un main et des methodes pour jouer au jeu de bataille navale.
+ * Le jeu est joué par un seul joueur. Le joueur commence par placer des navires sur
+ * une grille, puis il leur tire dessus.
  * Egalement, cette classe est facilement transposable en Pep/8.
  *
  * @author William Chretien, Code permanent : CHRW15109406
