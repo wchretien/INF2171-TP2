@@ -250,7 +250,7 @@ public class batnav {
         Pep8.stro(MSG_FIN);
         descripteurFin = creerDescripteur();
         if (descripteurFin[0] == '\n') {
-            initJeu();
+            main(new String[0]);
         } else {
             Pep8.stro(MSG_REVOIR);
         }
