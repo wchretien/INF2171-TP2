@@ -26,24 +26,23 @@ public class batnav {
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
     private static final char [] TABLEAU_CASES = new char [162];
 
-
-    public static void main (String [] args) {
-        initJeu();
-    }
-
-
-    /**
-     * Initialise le jeu en remplissant le tableau principal de cases considerees
-     * vides. Ensuite, solicite le joueur aux placements de bateaux.
-     */
-    private static void initJeu() {
-        for (int i = 0; i < TABLEAU_CASES.length; i++) {
-            TABLEAU_CASES[i] = '~';
-        }
+    public static void main(String [] args) {
+        initTableau();
         Pep8.stro(MSG_BIENV);
         printTableau();
         Pep8.stro(MSG_ENTRER);
         verifierDescriptionBateaux();
+    }
+
+
+    /**
+     * Initialise le tableau sur lequel se joue le jeu avec des cases
+     * considerees vides.
+     */
+    private static void initTableau() {
+        for (int i = 0; i < TABLEAU_CASES.length; i++) {
+            TABLEAU_CASES[i] = '~';
+        }
     }
 
 
