@@ -68,7 +68,7 @@ public class batnav {
      * d'espaces que l'utilisateur doit rentrer est `nbBateaux` - 1 et ceux-ci
      * doivent etre entre chaque description de bateaux.
      */
-    private static void verifierDescriptionBateaux(){
+    private static void verifierDescriptionBateaux() {
         char [] descripteurBateaux = creerDescripteur();
         char separateurBateaux;
         int nbBateaux = 0;
@@ -291,11 +291,14 @@ public class batnav {
     private static int changerNbGrandeur(char grandeur) {
         int nbCases;
         switch (grandeur) {
-            case 'p': nbCases =1;
+            case 'p':
+                nbCases =1;
                 break;
-            case 'm': nbCases = 3;
+            case 'm':
+                nbCases = 3;
                 break;
-            default: nbCases = 5;
+            default:
+                nbCases = 5;
                 break;
         }
         return nbCases;
