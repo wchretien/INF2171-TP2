@@ -25,13 +25,21 @@ public class batnav {
     private static final String MSG_ERR_PLACE = "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
     private static final char [] TABLEAU_CASES = new char [162];
+    private static final int TAILLE_STRINGS = 900;
 
     public static void main(String [] args) {
-        initTableau();
-        Pep8.stro(MSG_BIENV);
-        printTableau();
-        Pep8.stro(MSG_ENTRER);
-        verifierDescriptionBateaux();
+        char [] rejouer = new char[TAILLE_STRINGS];
+        do {
+            initTableau();
+            Pep8.stro(MSG_BIENV);
+            printTableau();
+            Pep8.stro(MSG_ENTRER);
+            placerBateaux();
+            feuAVolonte();
+            Pep8.stro(MSG_FIN);
+            rejouer = creerDescripteur();
+        } while (rejouer[0] == '\n');
+        Pep8.stro(MSG_REVOIR);
     }
 
 
@@ -68,50 +76,32 @@ public class batnav {
      * d'espaces que l'utilisateur doit rentrer est `nbBateaux` - 1 et ceux-ci
      * doivent etre entre chaque description de bateaux.
      */
-    private static void verifierDescriptionBateaux() {
+    private static void placerBateaux() {
         char [] descripteurBateaux = creerDescripteur();
         char separateurBateaux;
         int nbBateaux = 0;
-        int nbEspaces = verifierNbEspaces(descripteurBateaux);
         int i = 0;
 
         do {
-            if ((nbBateaux == 0 || nbEspaces >= nbBateaux) &&
-                    (verifierGrandeur(descripteurBateaux[i]) &&
-                            verifierOrientation(descripteurBateaux[i + 1]) &&
-                            verifierColonne(descripteurBateaux[i + 2]) &&
-                            verifierRangee(descripteurBateaux[i + 3]))){
+            if (verifierDescripteur(descripteurBateaux, i)) {
                 nbBateaux++;
                 separateurBateaux = descripteurBateaux[i + 4];
                 i += 5;
             } else {
                 Pep8.stro(MSG_ERR_PLACE);
                 descripteurBateaux = creerDescripteur();
-                nbEspaces = verifierNbEspaces(descripteurBateaux);
                 nbBateaux = 0;
                 separateurBateaux = 0;
                 i = 0;
             }
         } while (separateurBateaux != '\n');
-        retrouverBateaux(descripteurBateaux, nbBateaux);
-    }
 
-
-    /**
-     * Divise un descripteur de facon de retrouver la description de chacun des
-     * bateaux entres.
-     *
-     * @param descripteurBateaux un tableau de plusieurs descriptions de bateaux.
-     * @param nbBateaux          le nombre de bateaux que le descripteur contient.
-     */
-    private static void retrouverBateaux(char [] descripteurBateaux, int nbBateaux) {
-        for (int j = 0; j < nbBateaux; j++) {
-            placerBateaux(changerNbGrandeur(descripteurBateaux[j * 5]),
-                    changerCharOrien(descripteurBateaux[j * 5 + 1]),
-                    changerNbColonne(descripteurBateaux[j * 5 + 2]),
-                    changerNbRangee(descripteurBateaux[j * 5 + 3]));
+        for (i = 0; i < nbBateaux; i++) {
+            placerBateau(changerNbGrandeur(descripteurBateaux[i * 5]),
+                changerCharOrien(descripteurBateaux[i * 5 + 1]),
+                changerNbColonne(descripteurBateaux[i * 5 + 2]),
+                changerNbRangee(descripteurBateaux[i * 5 + 3]));
         }
-        solFeux();
     }
 
 
@@ -124,7 +114,7 @@ public class batnav {
      * @param colonne     la colonne dont le bateau commence.
      * @param rangee      la rangee dont le bateau commence.
      */
-    private static void placerBateaux(int grandeur, char orientation, int colonne, int rangee) {
+    private static void placerBateau(int grandeur, char orientation, int colonne, int rangee) {
         if (verifierPlacementBateau(grandeur, orientation, colonne, rangee)) {
             if (orientation == '>') {
                 for (int i = 0; i < grandeur; i++) {
@@ -140,15 +130,34 @@ public class batnav {
 
 
     /**
+     *
+     * @param descripteur   contient la description de tous les bateaux
+     *                      placés par le joueur.
+     * @param indexeDeBase  l'indexe à partir duquel on trouve la description
+     *                      du bateau qu'on vérifie.
+     * @return si le descripteur du bateau trouvé à indexeDeBase est correct
+     */
+    private static boolean verifierDescripteur(char [] descripteur,
+                                               int indexeDeBase) {
+        char grandeur    = descripteur[indexeDeBase];
+        char orientation = descripteur[indexeDeBase + 1];
+        char colonne     = descripteur[indexeDeBase + 2];
+        char rangee      = descripteur[indexeDeBase + 3];
+        return verifierGrandeur(grandeur) &&
+               verifierOrientation(orientation) &&
+               verifierColonne(colonne) && verifierRangee(rangee);
+    }
+
+
+    /**
      * Solicite l'utilisateur a entrer les feux a tirer sur les bateaux.
      */
-    private static void solFeux() {
+    private static void feuAVolonte() {
         printTableau();
         Pep8.stro(MSG_TIRER);
         while (verifierBateauPresent()) {
             verifierDescriptionFeux();
         }
-        solPartie();
     }
 
 
@@ -231,7 +240,7 @@ public class batnav {
      * @return un tableau contenant tous les caracteres de la phrase entree.
      */
     private static char[] creerDescripteur() {
-        char[] descripteur = new char[900];
+        char[] descripteur = new char[TAILLE_STRINGS];
         int i = 0;
 
         do {
@@ -239,21 +248,6 @@ public class batnav {
             i++;
         } while (descripteur[i - 1] != '\n');
         return descripteur;
-    }
-
-
-    /**
-     * Solicite une nouvelle partie lorsque tous les bateaux sont coules.
-     */
-    private static void solPartie() {
-        char [] descripteurFin;
-        Pep8.stro(MSG_FIN);
-        descripteurFin = creerDescripteur();
-        if (descripteurFin[0] == '\n') {
-            main(new String[0]);
-        } else {
-            Pep8.stro(MSG_REVOIR);
-        }
     }
 
 
