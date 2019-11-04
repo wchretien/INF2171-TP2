@@ -4,7 +4,7 @@
  * une grille, puis il leur tire dessus.
  * Egalement, cette classe est facilement transposable en Pep/8.
  *
- * @author William Chretien, Code permanent : CHRW15109406
+ * @author William Chretien,       Code permanent : CHRW15109406
  *
  * @author Ricardo Ruy Valle-Mena, Code permanent : VALR29129407
  *
