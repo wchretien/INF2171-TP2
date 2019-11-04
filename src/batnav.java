@@ -395,18 +395,15 @@ public class batnav {
     /**
      * Verifie si au moins un bateau est present dans le tableau.
      *
-     * @return si au moins un bateau est present ou pas.
+     * @return true si au moins un bateau est present.
      */
     private static boolean verifierBateauPresent() {
-        int i = 0;
-        boolean bateauPresent = false;
-        while (i < TABLEAU_CASES.length && !bateauPresent) {
+        for (int i = 0; i < TABLEAU_CASES.length; i++) {
             if (TABLEAU_CASES[i] == 'v' || TABLEAU_CASES[i] == '>') {
-                bateauPresent = true;
+                return true;
             }
-            i++;
         }
-        return bateauPresent;
+        return false;
     }
 
 
