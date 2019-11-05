@@ -23,6 +23,7 @@ public class batnav {
     private static final String MSG_REVOIR = "Au revoir!";
     private static final String MSG_ERR_PLACE = "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
+    private static final int NB_COLONNES = 18;
     private static final char [] TABLEAU_CASES = new char [162];
     private static final int TAILLE_STRINGS = 900;
 
