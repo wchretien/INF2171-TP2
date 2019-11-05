@@ -30,7 +30,8 @@ public class batnav {
         "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
     private static final int NB_COLONNES = 18;
-    private static final char [] TABLEAU_CASES = new char [162];
+    private static final int NB_CASES = 162;
+    private static final char [] TABLEAU_CASES = new char [NB_CASES];
     private static final int TAILLE_STRINGS = 900;
 
     public static void main(String [] args) {
@@ -474,8 +475,8 @@ public class batnav {
     private static boolean verifierHorsChamps(int colonne, int rangee) {
         return (colonne + mult(rangee, NB_COLONNES) < mult(rangee + 1, NB_COLONNES))
                 && (colonne + mult(rangee, NB_COLONNES) >=
-                    NB_COLONNES + mult(rangee - 1, NB_COLONNES))
-                && (colonne + mult(rangee, NB_COLONNES) < 162)
+                   NB_COLONNES + mult(rangee - 1, NB_COLONNES))
+                && (colonne + mult(rangee, NB_COLONNES) < NB_CASES)
                 && (colonne + mult(rangee, NB_COLONNES) >= 0);
     }
 
