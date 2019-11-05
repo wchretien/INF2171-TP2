@@ -13,15 +13,21 @@ public class batnav {
 
     // Constantes
     private static final String MSG_BIENV = "Bienvenue au jeu de bataille navale!\n\n";
-    private static final String MSG_ENTRER = "Entrer la description et la position des bateaux\nselon le format suivant," +
-            " separes par des espaces:\ntaille[p/m/g] orientation[h/v] colonne[A-R] rangee[1-9]\nex: ghC4 mvM2 phK9\n";
-    private static final String MSG_TIRER = "Feu a volonte!\n(entrer les coups a tirer: colonne [A-R] rangee [1-9])" +
-            "\nex: A3 I5 M3\n";
-    private static final String MSG_ERR_TIRER = "Erreur! Mauvais placement de tires, veuillez recommencer.\n";
-    private static final String MSG_FIN = "Vous avez aneanti la flotte!\nAppuyer sur <Enter> pour jouer a nouveau ou" +
-            "\nn'importe quelle autre saisie pour quitter.\n";
+    private static final String MSG_ENTRER =
+        "Entrer la description et la position des bateaux\nselon le format " +
+        "suivant, separes par des espaces:\ntaille[p/m/g] orientation[h/v] " +
+        "colonne[A-R] rangee[1-9]\nex: ghC4 mvM2 phK9\n";
+    private static final String MSG_TIRER =
+        "Feu a volonte!\n(entrer les coups a tirer: colonne [A-R] rangee " +
+        "[1-9])\nex: A3 I5 M3\n";
+    private static final String MSG_ERR_TIRER =
+        "Erreur! Mauvais placement de tires, veuillez recommencer.\n";
+    private static final String MSG_FIN =
+        "Vous avez aneanti la flotte!\nAppuyer sur <Enter> pour jouer a " +
+        "nouveau ou \nn'importe quelle autre saisie pour quitter.\n";
     private static final String MSG_REVOIR = "Au revoir!";
-    private static final String MSG_ERR_PLACE = "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
+    private static final String MSG_ERR_PLACE =
+        "Erreur! Mauvais placement de bateaux, veuillez recommencer.\n";
     private static final String POS_COL = "  ABCDEFGHIJKLMNOPQR\n";
     private static final int NB_COLONNES = 18;
     private static final char [] TABLEAU_CASES = new char [162];
@@ -61,8 +67,8 @@ public class batnav {
         Pep8.stro(POS_COL);
         for (int i = 0; i < 9; i++) {
             Pep8.stro((i + 1) + "|");
-            for (int j = 0; j < 18; j++) {
-                Pep8.charo(TABLEAU_CASES[j + mult(i, 18)]);
+            for (int j = 0; j < NB_COLONNES; j++) {
+                Pep8.charo(TABLEAU_CASES[j + mult(i, NB_COLONNES)]);
             }
             Pep8.stro("|\n");
         }
@@ -115,15 +121,18 @@ public class batnav {
      * @param colonne     la colonne dont le bateau commence.
      * @param rangee      la rangee dont le bateau commence.
      */
-    private static void placerBateau(int grandeur, char orientation, int colonne, int rangee) {
+    private static void placerBateau(int grandeur, char orientation,
+                                     int colonne, int rangee) {
         if (verifierPlacementBateau(grandeur, orientation, colonne, rangee)) {
             if (orientation == '>') {
                 for (int i = 0; i < grandeur; i++) {
-                    TABLEAU_CASES[colonne + mult(rangee, 18) + i] = orientation;
+                    TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES) + i] = orientation;
                 }
             } else {
                 for (int i = 0; i < grandeur; i++) {
-                    TABLEAU_CASES[colonne + mult(rangee, 18) + mult(i, 18)] = orientation;
+                    TABLEAU_CASES[colonne +
+                                  mult(rangee, NB_COLONNES) +
+                                  mult(i, NB_COLONNES)] = orientation;
                 }
             }
         }
@@ -255,13 +264,13 @@ public class batnav {
     private static void placerFeu(int colonne, int rangee) {
         if (verifierHorsChamps(colonne, rangee)) {
             if (verifierBateauPresent(colonne, rangee)) {
-                TABLEAU_CASES[colonne + mult(rangee, 18)] = '*';
+                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = '*';
                 placerFeu(colonne + 1, rangee);
                 placerFeu(colonne - 1, rangee);
                 placerFeu(colonne, rangee + 1);
                 placerFeu(colonne, rangee - 1);
-            } else if (TABLEAU_CASES[colonne + mult(rangee, 18)] != '*') {
-                TABLEAU_CASES[colonne + mult(rangee, 18)] = 'o';
+            } else if (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] != '*') {
+                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = 'o';
             }
         }
     }
@@ -365,11 +374,13 @@ public class batnav {
         for (int i = 0; i < grandeur; i++) {
             if (orientation == '>') {
                 if (!verifierHorsChamps(colonne + i, rangee) ||
-                        (TABLEAU_CASES[colonne + mult(rangee, 18) + i] != '~')) {
+                        (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES) + i] != '~')) {
                     placementValide = false;
                 }
             } else if (!verifierHorsChamps(colonne, rangee + i) ||
-                    (TABLEAU_CASES[colonne + mult(rangee, 18) + mult(i, 18)] != '~')) {
+                    (TABLEAU_CASES[colonne +
+                                   mult(rangee, NB_COLONNES) +
+                                   mult(i, NB_COLONNES)] != '~')) {
                 placementValide = false;
             }
         }
@@ -448,8 +459,8 @@ public class batnav {
      * @return si un bateau est present a cet endroit.
      */
     private static boolean verifierBateauPresent(int colonne, int rangee) {
-        return TABLEAU_CASES[colonne + mult(rangee, 18)] == 'v' ||
-               TABLEAU_CASES[colonne + mult(rangee, 18)] == '>';
+        return TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] == 'v' ||
+               TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] == '>';
     }
 
 
@@ -461,10 +472,11 @@ public class batnav {
      * @return si la position est a l'interieur du tableau du jeu ou non.
      */
     private static boolean verifierHorsChamps(int colonne, int rangee) {
-        return (colonne + mult(rangee, 18) < mult(rangee + 1, 18))
-                && (colonne + mult(rangee, 18) >= 18 + mult(rangee - 1, 18))
-                && (colonne + mult(rangee, 18) < 162)
-                && (colonne + mult(rangee, 18) >= 0);
+        return (colonne + mult(rangee, NB_COLONNES) < mult(rangee + 1, NB_COLONNES))
+                && (colonne + mult(rangee, NB_COLONNES) >=
+                    NB_COLONNES + mult(rangee - 1, NB_COLONNES))
+                && (colonne + mult(rangee, NB_COLONNES) < 162)
+                && (colonne + mult(rangee, NB_COLONNES) >= 0);
     }
 
 
