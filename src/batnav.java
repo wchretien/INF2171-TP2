@@ -5,7 +5,6 @@
  * facilement transposable en Pep/8.
  *
  * @author William Chretien,       Code permanent : CHRW15109406
- *
  * @author Ricardo Ruy Valle-Mena, Code permanent : VALR29129407
  *
  * @version 2019-11-03
@@ -163,8 +162,34 @@ public class batnav {
         printTableau();
         Pep8.stro(MSG_TIRER);
         while (verifierBateauPresent()) {
-            verifierDescriptionFeux();
+            placerFeux();
+            printTableau();
         }
+    }
+
+
+    private static void placerFeux() {
+        char [] descripteurFeux = creerDescripteur();
+        while (!verifierDescriptionFeux(descripteurFeux)) {
+            descripteurFeux = creerDescripteur();
+        }
+        int nbFeux = compterNbFeux(descripteurFeux);
+        placerFeux(descripteurFeux, nbFeux);
+    }
+
+
+    private static void placerFeux(char [] feux, int nb) {
+        int colonne, rangee;
+        for (int i = 0; i < nb; i++) {
+            colonne = changerNbColonne(feux[mult(i, 3)]);
+            rangee  = changerNbRangee( feux[mult(i, 3) + 1]);
+            placerFeu(colonne, rangee);
+        }
+    }
+
+
+    private static int compterNbFeux(char [] descripteurFeux) {
+        return verifierNbEspaces(descripteurFeux) + 1;
     }
 
 
@@ -175,46 +200,17 @@ public class batnav {
      * doit rentrer est `nbFeux` - 1 et ceux-ci doivent etre place entre chaque
      * description de feux.
      */
-    private static void verifierDescriptionFeux() {
-        char[] descripteurFeux = creerDescripteur();
-        char separateurFeux;
-        int nbFeux = 0;
-        int nbEspaces = verifierNbEspaces(descripteurFeux);
-        int i = 0;
-
-        do {
-            if ((nbFeux == 0 || nbEspaces >= nbFeux)
-                    && verifierColonne(descripteurFeux[i])
-                    && verifierRangee(descripteurFeux[i + 1])) {
-                nbFeux++;
-                separateurFeux = descripteurFeux[i + 2];
-                i += 3;
-            } else {
+    private static boolean verifierDescriptionFeux(char [] descripteurFeux) {
+        char separateurFeux = 0;
+        for (int i = 0; separateurFeux != '\n'; i += 3) {
+            if (!(verifierColonne(descripteurFeux[i]) &&
+                   verifierRangee(descripteurFeux[i + 1]))) {
                 Pep8.stro(MSG_ERR_TIRER);
-                descripteurFeux = creerDescripteur();
-                nbEspaces = verifierNbEspaces(descripteurFeux);
-                separateurFeux = 0;
-                nbFeux = 0;
-                i = 0;
+                return false;
             }
-        } while (separateurFeux != '\n');
-        retrouverFeux(descripteurFeux, nbFeux);
-    }
-
-
-    /**
-     * Divise un descripteur de facon de retrouver la description de chacun des feux
-     * entres.
-     *
-     * @param descripteurFeux un tableau de plusieurs descriptions de feux.
-     * @param nbFeux          le nombre de feux que le descripteur contient.
-     */
-    private static void retrouverFeux(char[] descripteurFeux, int nbFeux) {
-        for (int i = 0; i < nbFeux; i++) {
-            placerFeux(changerNbColonne(descripteurFeux[mult(i, 3)]),
-                       changerNbRangee( descripteurFeux[mult(i, 3) + 1]));
-            printTableau();
+            separateurFeux = descripteurFeux[i + 2];
         }
+        return true;
     }
 
 
@@ -227,14 +223,14 @@ public class batnav {
      * @param colonne la position du feu par rapport a la colonne.
      * @param rangee  la position du feu par rapport a la rangee.
      */
-    private static void placerFeux(int colonne, int rangee) {
+    private static void placerFeu(int colonne, int rangee) {
         if (verifierHorsChamps(colonne, rangee)) {
             if (verifierBateauPresent(colonne, rangee)) {
                 TABLEAU_CASES[colonne + mult(rangee, 18)] = '*';
-                placerFeux(colonne + 1, rangee);
-                placerFeux(colonne - 1, rangee);
-                placerFeux(colonne, rangee + 1);
-                placerFeux(colonne, rangee - 1);
+                placerFeu(colonne + 1, rangee);
+                placerFeu(colonne - 1, rangee);
+                placerFeu(colonne, rangee + 1);
+                placerFeu(colonne, rangee - 1);
             } else if (TABLEAU_CASES[colonne + mult(rangee, 18)] != '*') {
                 TABLEAU_CASES[colonne + mult(rangee, 18)] = 'o';
             }
