@@ -71,9 +71,10 @@ public class batnav {
     /**
      * Verifie que les descriptions des bateaux entres par l'utilisateur sont
      * conformes a l'enonce. C'est a dire qu'il y a seulement un espace entre chaque
-     * descripteur de bateaux et que ce descripteur ait 4 caracteres. Le nombre
-     * d'espaces que l'utilisateur doit rentrer est `nbBateaux` - 1 et ceux-ci
-     * doivent etre entre chaque description de bateaux.
+     * descripteur de bateaux et que ce descripteur ait 4 caracteres.
+     *
+     * Une fois les descriptions vérifiées, place les bateaux décrits sur le
+     * tableau.
      */
     private static void placerBateaux() {
         char [] descripteurBateaux = creerDescripteur();
@@ -128,6 +129,16 @@ public class batnav {
     }
 
 
+    /**
+     * Implémentation de la multiplication par une série d'additions.
+     * La multiplication n'existe pas en Pep8. Il est important de
+     * l'implémenter de la sorte en Java pour faciliter son implémentation en
+     * Pep8.
+     *
+     * @param a une des opérandes de la multiplication
+     * @param b l'autre opérande de la multiplication
+     * @return le résultat de la multiplication
+     */
     private static int mult(int a, int b) {
         int resultat = 0;
         for (int i = 0; i < b; i++) resultat += a;
@@ -156,7 +167,8 @@ public class batnav {
 
 
     /**
-     * Solicite l'utilisateur a entrer les feux a tirer sur les bateaux.
+     * Solicite l'utilisateur a entrer les feux a tirer sur les bateaux,
+     * jusqu'à la fin du jeu.
      */
     private static void feuAVolonte() {
         printTableau();
@@ -168,6 +180,10 @@ public class batnav {
     }
 
 
+    /**
+     * Vérifie que la description de feux entrée par l'utilisateur soit
+     * valide, puis place les feux sur le tableau.
+     */
     private static void placerFeux() {
         char [] descripteurFeux = creerDescripteur();
         while (!verifierDescriptionFeux(descripteurFeux)) {
@@ -178,6 +194,12 @@ public class batnav {
     }
 
 
+    /**
+     * Place les feux spécifiés sur le tableau.
+     *
+     * @param feux description des feux à placer, après validation
+     * @param nb   le nombre de feux à placer
+     */
     private static void placerFeux(char [] feux, int nb) {
         int colonne, rangee;
         for (int i = 0; i < nb; i++) {
@@ -188,6 +210,12 @@ public class batnav {
     }
 
 
+    /**
+     * Compte le nombre de feux dans le descripteur donné.
+     *
+     * @param descripteurFeux une description valide d'au moins un feu
+     * @return le nombre de feux dans la description
+     */
     private static int compterNbFeux(char [] descripteurFeux) {
         return verifierNbEspaces(descripteurFeux) + 1;
     }
@@ -196,9 +224,9 @@ public class batnav {
     /**
      * Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
      * C'est a dire qu'il y a seulement un espace entre chaque descripteur de feux
-     * et que ce descripteur ait 2 caracteres. Le nombre d'espaces que l'utilisateur
-     * doit rentrer est `nbFeux` - 1 et ceux-ci doivent etre place entre chaque
-     * description de feux.
+     * et que ce descripteur ait 2 caracteres.
+     *
+     * @param descripteurFeux le descripteur des feux
      */
     private static boolean verifierDescriptionFeux(char [] descripteurFeux) {
         char separateurFeux = 0;
@@ -217,11 +245,11 @@ public class batnav {
     /**
      * Place un feu dans le tableau en changeant le charactere representant l'eau ou
      * bateaux par celui d'un feu rate ou touche. Un bateau touche par un feu cree 4
-     * debris chacun similaire a l'effet d'un feu, on l'utilise donc de la recursion
-     * pour creer cette effet a ces cases.
+     * debris chacun similaire a l'effet d'un feu, on utilise donc de la recursion
+     * pour creer cet effet a ces cases.
      *
-     * @param colonne la position du feu par rapport a la colonne.
-     * @param rangee  la position du feu par rapport a la rangee.
+     * @param colonne la colonne où on place le feu
+     * @param rangee  la rangée où on place le feu
      */
     private static void placerFeu(int colonne, int rangee) {
         if (verifierHorsChamps(colonne, rangee)) {
@@ -353,7 +381,7 @@ public class batnav {
      * valide.
      *
      * @param grandeur
-     * @return
+     * @return booléen indiquant si la grandeur est valide
      */
     private static boolean verifierGrandeur(char grandeur) {
         return grandeur == 'p' || grandeur == 'm' || grandeur == 'g';
@@ -365,7 +393,7 @@ public class batnav {
      * est valide.
      *
      * @param orientation
-     * @return
+     * @return booléen indiquant si l'orientation est valide
      */
     private static boolean verifierOrientation(char orientation) {
         return orientation == 'h' || orientation == 'v';
@@ -377,7 +405,7 @@ public class batnav {
      * valide.
      *
      * @param colonne
-     * @return
+     * @return booléen indiquant si la colonne est valide
      */
     private static boolean verifierColonne(char colonne) {
         return colonne >= 'A' && colonne <= 'R';
@@ -389,7 +417,7 @@ public class batnav {
      * valide.
      *
      * @param rangee
-     * @return
+     * @return booléen indiquant si la rangée est valide
      */
     private static boolean verifierRangee(char rangee) {
         return rangee >= '1' && rangee <= '9';
