@@ -41,7 +41,7 @@ public class batnav {
             Pep8.stro(MSG_BIENV);
             printTableau();
             Pep8.stro(MSG_ENTRER);
-            placerBateaux();
+            verifierBateauxEntres();
             feuAVolonte();
             Pep8.stro(MSG_FIN);
             rejouer = creerDescripteur();
@@ -77,21 +77,21 @@ public class batnav {
 
 
     /**
-     * Verifie que les descriptions des bateaux entres par l'utilisateur sont
-     * conformes a l'enonce. C'est a dire qu'il y a seulement un espace entre chaque
-     * descripteur de bateaux et que ce descripteur ait 4 caracteres.
+     * Verifie que les bateaux entres par l'utilisateur sont conformes a l'enonce.
+     * C'est a dire qu'il y a un espace entre chaque descripteur de bateaux et
+     * que ce descripteur ait 4 caracteres.
      *
      * Une fois les descriptions vérifiées, place les bateaux décrits sur le
      * tableau.
      */
-    private static void placerBateaux() {
+    private static void verifierBateauxEntres() {
         char [] descripteurBateaux = creerDescripteur();
         char separateurBateaux;
         int nbBateaux = 0;
         int i = 0;
 
         do {
-            if (verifierDescripteur(descripteurBateaux, i)) {
+            if (verifierDescripteurBateau(descripteurBateaux, i)) {
                 nbBateaux++;
                 separateurBateaux = descripteurBateaux[i + 4];
                 i += 5;
@@ -110,6 +110,27 @@ public class batnav {
                 changerNbColonne(descripteurBateaux[mult(i, 5) + 2]),
                 changerNbRangee( descripteurBateaux[mult(i, 5) + 3]));
         }
+    }
+
+
+    /**
+     * Verifie que le descripteur d'un bateau a l'indexe indique est valide.
+     *
+     * @param descripteur   contient la description de tous les bateaux
+     *                      placés par le joueur.
+     * @param indexeDeBase  l'indexe à partir duquel on trouve la description
+     *                      du bateau qu'on vérifie.
+     * @return si le descripteur du bateau trouvé à indexeDeBase est correct
+     */
+    private static boolean verifierDescripteurBateau(char [] descripteur,
+                                                     int indexeDeBase) {
+        char grandeur    = descripteur[indexeDeBase];
+        char orientation = descripteur[indexeDeBase + 1];
+        char colonne     = descripteur[indexeDeBase + 2];
+        char rangee      = descripteur[indexeDeBase + 3];
+        return verifierGrandeur(grandeur) &&
+                verifierOrientation(orientation) &&
+                verifierColonne(colonne) && verifierRangee(rangee);
     }
 
 
@@ -141,39 +162,32 @@ public class batnav {
 
 
     /**
-     * Implémentation de la multiplication par une série d'additions.
-     * La multiplication n'existe pas en Pep8. Il est important de
-     * l'implémenter de la sorte en Java pour faciliter son implémentation en
-     * Pep8.
+     * Verifie qu'un bateau peut etre entre dans le tableau et qu'il ne rentre pas
+     * en collision avec un autre.
      *
-     * @param a une des opérandes de la multiplication
-     * @param b l'autre opérande de la multiplication
-     * @return le résultat de la multiplication
+     * @param grandeur    la grandeur du bateau.
+     * @param orientation l'orientation du bateau.
+     * @param colonne     la position en colonne du bateau.
+     * @param rangee      la position en rangee du bateau.
+     * @return si le bateau peut etre place a cette endroit.
      */
-    private static int mult(int a, int b) {
-        int resultat = 0;
-        for (int i = 0; i < b; i++) resultat += a;
-        return resultat;
-    }
-
-
-    /**
-     *
-     * @param descripteur   contient la description de tous les bateaux
-     *                      placés par le joueur.
-     * @param indexeDeBase  l'indexe à partir duquel on trouve la description
-     *                      du bateau qu'on vérifie.
-     * @return si le descripteur du bateau trouvé à indexeDeBase est correct
-     */
-    private static boolean verifierDescripteur(char [] descripteur,
-                                               int indexeDeBase) {
-        char grandeur    = descripteur[indexeDeBase];
-        char orientation = descripteur[indexeDeBase + 1];
-        char colonne     = descripteur[indexeDeBase + 2];
-        char rangee      = descripteur[indexeDeBase + 3];
-        return verifierGrandeur(grandeur) &&
-               verifierOrientation(orientation) &&
-               verifierColonne(colonne) && verifierRangee(rangee);
+    private static boolean verifierPlacementBateau(int grandeur, char orientation,
+                                                   int colonne, int rangee) {
+        boolean placementValide = true;
+        for (int i = 0; i < grandeur; i++) {
+            if (orientation == '>') {
+                if (!verifierHorsChamps(colonne + i, rangee) ||
+                        (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES) + i] != '~')) {
+                    placementValide = false;
+                }
+            } else if (!verifierHorsChamps(colonne, rangee + i) ||
+                    (TABLEAU_CASES[colonne +
+                            mult(rangee, NB_COLONNES) +
+                            mult(i, NB_COLONNES)] != '~')) {
+                placementValide = false;
+            }
+        }
+        return placementValide;
     }
 
 
@@ -182,26 +196,38 @@ public class batnav {
      * jusqu'à la fin du jeu.
      */
     private static void feuAVolonte() {
+        char [] descripteurFeux;
         printTableau();
         Pep8.stro(MSG_TIRER);
         while (verifierBateauPresent()) {
-            placerFeux();
-            printTableau();
+            descripteurFeux = creerDescripteur();
+            while (!verifierFeuxEntres(descripteurFeux)) {
+                descripteurFeux = creerDescripteur();
+            }
+            int nbFeux = compterNbFeux(descripteurFeux);
+            placerFeux(descripteurFeux, nbFeux);
         }
     }
 
 
     /**
-     * Vérifie que la description de feux entrée par l'utilisateur soit
-     * valide, puis place les feux sur le tableau.
+     * Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
+     * C'est a dire qu'il y a un espace entre chaque descripteur de feux et que
+     * la description d'un feux ait 2 caracteres.
+     *
+     * @param descripteurFeux le descripteur des feux
      */
-    private static void placerFeux() {
-        char [] descripteurFeux = creerDescripteur();
-        while (!verifierDescriptionFeux(descripteurFeux)) {
-            descripteurFeux = creerDescripteur();
+    private static boolean verifierFeuxEntres(char [] descripteurFeux) {
+        char separateurFeux = 0;
+        for (int i = 0; separateurFeux != '\n'; i += 3) {
+            if (!(verifierColonne(descripteurFeux[i]) &&
+                    verifierRangee(descripteurFeux[i + 1]))) {
+                Pep8.stro(MSG_ERR_TIRER);
+                return false;
+            }
+            separateurFeux = descripteurFeux[i + 2];
         }
-        int nbFeux = compterNbFeux(descripteurFeux);
-        placerFeux(descripteurFeux, nbFeux);
+        return true;
     }
 
 
@@ -216,10 +242,35 @@ public class batnav {
         for (int i = 0; i < nb; i++) {
             colonne = changerNbColonne(feux[mult(i, 3)]);
             rangee  = changerNbRangee( feux[mult(i, 3) + 1]);
-            placerFeu(colonne, rangee);
+            tirerFeu(colonne, rangee);
+            printTableau();
         }
     }
 
+
+    /**
+     * Tire un feu dans le tableau en changeant le charactere representant l'eau ou
+     * bateaux par celui d'un feu rate ou touche. Un bateau touche par un feu cree 4
+     * debris chacun similaire a l'effet d'un feu, on utilise donc de la recursion
+     * pour creer cet effet a ces cases.
+     *
+     * @param colonne la colonne où on tire le feu
+     * @param rangee  la rangée où on tire le feu
+     */
+    private static void tirerFeu(int colonne, int rangee) {
+        if (verifierHorsChamps(colonne, rangee)) {
+            if (verifierBateauPresent(colonne, rangee)) {
+                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = '*';
+                tirerFeu(colonne + 1, rangee);
+                tirerFeu(colonne - 1, rangee);
+                tirerFeu(colonne, rangee + 1);
+                tirerFeu(colonne, rangee - 1);
+            } else if (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] != '*') {
+                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = 'o';
+            }
+        }
+    }
+    
 
     /**
      * Compte le nombre de feux dans le descripteur donné.
@@ -229,51 +280,6 @@ public class batnav {
      */
     private static int compterNbFeux(char [] descripteurFeux) {
         return verifierNbEspaces(descripteurFeux) + 1;
-    }
-
-
-    /**
-     * Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
-     * C'est a dire qu'il y a seulement un espace entre chaque descripteur de feux
-     * et que ce descripteur ait 2 caracteres.
-     *
-     * @param descripteurFeux le descripteur des feux
-     */
-    private static boolean verifierDescriptionFeux(char [] descripteurFeux) {
-        char separateurFeux = 0;
-        for (int i = 0; separateurFeux != '\n'; i += 3) {
-            if (!(verifierColonne(descripteurFeux[i]) &&
-                   verifierRangee(descripteurFeux[i + 1]))) {
-                Pep8.stro(MSG_ERR_TIRER);
-                return false;
-            }
-            separateurFeux = descripteurFeux[i + 2];
-        }
-        return true;
-    }
-
-
-    /**
-     * Place un feu dans le tableau en changeant le charactere representant l'eau ou
-     * bateaux par celui d'un feu rate ou touche. Un bateau touche par un feu cree 4
-     * debris chacun similaire a l'effet d'un feu, on utilise donc de la recursion
-     * pour creer cet effet a ces cases.
-     *
-     * @param colonne la colonne où on place le feu
-     * @param rangee  la rangée où on place le feu
-     */
-    private static void placerFeu(int colonne, int rangee) {
-        if (verifierHorsChamps(colonne, rangee)) {
-            if (verifierBateauPresent(colonne, rangee)) {
-                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = '*';
-                placerFeu(colonne + 1, rangee);
-                placerFeu(colonne - 1, rangee);
-                placerFeu(colonne, rangee + 1);
-                placerFeu(colonne, rangee - 1);
-            } else if (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] != '*') {
-                TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES)] = 'o';
-            }
-        }
     }
 
 
@@ -356,36 +362,6 @@ public class batnav {
             orientationAffichage = '>';
         }
         return orientationAffichage;
-    }
-
-
-    /**
-     * Verifie qu'un bateau peut etre entre dans le tableau et qu'il ne rentre pas
-     * en collision avec un autre.
-     *
-     * @param grandeur    la grandeur du bateau.
-     * @param orientation l'orientation du bateau.
-     * @param colonne     la position en colonne du bateau.
-     * @param rangee      la position en rangee du bateau.
-     * @return si le bateau peut etre place a cette endroit.
-     */
-    private static boolean verifierPlacementBateau(int grandeur, char orientation,
-                                                   int colonne, int rangee) {
-        boolean placementValide = true;
-        for (int i = 0; i < grandeur; i++) {
-            if (orientation == '>') {
-                if (!verifierHorsChamps(colonne + i, rangee) ||
-                        (TABLEAU_CASES[colonne + mult(rangee, NB_COLONNES) + i] != '~')) {
-                    placementValide = false;
-                }
-            } else if (!verifierHorsChamps(colonne, rangee + i) ||
-                    (TABLEAU_CASES[colonne +
-                                   mult(rangee, NB_COLONNES) +
-                                   mult(i, NB_COLONNES)] != '~')) {
-                placementValide = false;
-            }
-        }
-        return placementValide;
     }
 
 
@@ -498,6 +474,23 @@ public class batnav {
             i++;
         }
         return nbEspaces;
+    }
+
+
+    /**
+     * Implémentation de la multiplication par une série d'additions.
+     * La multiplication n'existe pas en Pep8. Il est important de
+     * l'implémenter de la sorte en Java pour faciliter son implémentation en
+     * Pep8.
+     *
+     * @param a une des opérandes de la multiplication
+     * @param b l'autre opérande de la multiplication
+     * @return le résultat de la multiplication
+     */
+    private static int mult(int a, int b) {
+        int resultat = 0;
+        for (int i = 0; i < b; i++) resultat += a;
+        return resultat;
     }
 
 
