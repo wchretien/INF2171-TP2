@@ -35,7 +35,7 @@ public class batnav {
     private static final int TAILLE_STRINGS = 900;
 
     public static void main(String [] args) {
-        char [] rejouer;
+        char [] rejouer = new char[TAILLE_STRINGS];
         do {
             initTableau();
             Pep8.stro(MSG_BIENV);
