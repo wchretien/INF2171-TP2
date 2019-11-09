@@ -1,3 +1,9 @@
+; Ce programme fait jouer un jeu de bataille navale. Le jeu est joué par un seul
+; joueur. Le joueur commence par placer des navires sur une grille, puis il leur
+; tire dessus.
+;
+; Auteur: Wiliam Chretien,        Code permanent: CHRW15109406
+; Auteur: Ricardo Ruy Valle-Mena, Code permanent: VALR29129407
 mainLoop:call    initTab
          stro    MSG_BIEN,d
          call    printTab
