@@ -1,3 +1,15 @@
+mainLoop:call    initTab
+         stro    MSG_BIEN,d
+         call    printTab
+         stro    MSG_ENTR,d
+         call    verifBat
+         call    feuVolnt
+         stro    MSG_FIN,d
+         call    stri
+         cpa     '\n',i
+         breq    mainLoop
+         stop
+
 ; Variables globales représentant les messages qui peuvent être affichés
 MSG_BIEN:.ascii  "Bienvenue au jeu de bataille navale!\n\n\x00"
 MSG_ENTR:.ascii  "Entrer la description et la position des bateaux\n"
