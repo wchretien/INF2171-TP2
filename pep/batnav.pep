@@ -16,6 +16,17 @@ mainLoop:call    initTab
          breq    mainLoop
          stop
 
+; fonction qui initialise le tableau
+initTab: ldx     0,i
+; loop de fonction initTab (IT)
+ITLoop:  cpx     NB_CASES,i
+         brge    ITFin
+         ldbytea '~',i
+         stbytea TABLEAU,x
+         addx    1,i
+         br      ITLoop
+; fin de fonction initTab (IT)
+ITFin:   ret0
 ; Variables globales représentant les messages qui peuvent être affichés
 MSG_BIEN:.ascii  "Bienvenue au jeu de bataille navale!\n\n\x00"
 MSG_ENTR:.ascii  "Entrer la description et la position des bateaux\n"
