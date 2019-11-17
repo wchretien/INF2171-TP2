@@ -9,7 +9,7 @@ mainLoop:CALL    initTab
          CALL    printTab
          STRO    MSG_ENTR,d
          CALL    verifBat 
-         ;call    feuVolnt
+         CALL    feuVolnt
          ;stro    MSG_FIN,d
          ;call    stri
          ;cpa     '\n',i
@@ -76,7 +76,7 @@ PTRangee:.EQUATE 6
 
 
 ; Verifie que les bateaux entres sont conformes a l'enonce.
-verifBat:SUBSP   16,i
+verifBat:SUBSP   16,i        ;reserve variables locales
          BR      iniVarVB 
 loopVBat:CALL    creeDesc    ;init un descripteur par le tas
          STX     descBat,s   ;range le pointeur du descripteur
@@ -84,8 +84,8 @@ loopVBat:CALL    creeDesc    ;init un descripteur par le tas
 loopVdes:LDA     descBat,s   ;met le pointeur du descripteur dans A pour appeller verDescB
          CALL    verDescB    ;la methode retourne 0 si une description de bateau est mauvaise, 1 si bonne
          CPA     1,i         ;
-         BREQ    batVal      ;si bonne on continue plus a batVal
-         STRO    MSG_EBAT,d  ;sinon affiche un msg d'erreur et reinitialise les variables locales
+         BREQ    batVal      ;si bonne on peut continuer
+         STRO    MSG_EBAT,d  ;sinon affiche un msg d'erreur et reinitialise nbBateau
 iniVarVB:LDA     0,i         ;
          STA     nbBateau,s  ;
          BR      loopVBat    ; 
@@ -93,9 +93,9 @@ batVal:  LDA     nbBateau,s  ;la description du bateau est valide
          ADDA    1,i         ;nbBateau++
          STA     nbBateau,s  ;
          ADDX    4,i         ;X += 4
-         LDBYTEA descBat,sxf ;separBat = desc[A]
+         LDBYTEA descBat,sxf ;A = desc[X]
          ADDX    1,i         ;X += 1
-         CPA     '\n',i      ;si X += 5 != '\n' il y a au moins une autre description de bateaux
+         CPA     '\n',i      ;si A != '\n' il y a au moins une autre description de bateaux
          BRNE    loopVdes    ; 
          LDA     0,i
          STA     iterA,s
@@ -107,7 +107,7 @@ batPLoop:LDA     iterA,s     ;for (A = 0; A < nbBateau; A++)
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;X = descBat[A*5 mot]
-; Change le char de la grandeur en son nombre de cases relatif puis le place sur le stack pour la fonction placeBat
+; Change le char de la grandeur en son nombre de cases relatif puis le place sur la pile pour la fonction placeBat
          LDA     0,i
          LDBYTEA descBat,sxf
          CPA     'p',i
@@ -115,14 +115,14 @@ batPLoop:LDA     iterA,s     ;for (A = 0; A < nbBateau; A++)
          CPA     'm',i
          BREQ    nbCases3
          LDA     5,i
-         STA     nbCasesT,s   ;
+         STA     nbCasesT,s   
          BR      signOrie
 nbCases1:LDA     1,i
-         STA     nbCasesT,s   ;
+         STA     nbCasesT,s   
          BR      signOrie
 nbCases3:LDA     3,i
-         STA     nbCasesT,s   ;
-; Change le char de l'orientation en un caractere plus representatif pour l'affichage dans le tableau et le place sur le stack pour la fonction placeBat
+         STA     nbCasesT,s   
+; Change le char de l'orientation en un caractere plus representatif pour l'affichage dans le tableau et le place sur la pile pour la fonction placeBat
 signOrie:LDA     iterA,s     ;on retrouve chaque deuxieme caractere d'une description de bateau grace a X = A * 5 + 1 
          LDX     5,i         ;
          CALL    mult        ;
@@ -133,13 +133,13 @@ signOrie:LDA     iterA,s     ;on retrouve chaque deuxieme caractere d'une descri
          LDBYTEA descBat,sxf
          CPA     'h',i
          BREQ    changChO
-         STA     charOriT,s  ;
+         STA     charOriT,s  
          BR      chNbCln 
 changChO:LDBYTEA '>',i
-         STA     charOriT,s  ;
-; Change le char de la colonne en sa valeur decimal et le place sur le stack pour la fonction placeBat
+         STA     charOriT,s  
+; Change le char de la colonne en sa valeur decimal et le place sur la pile pour la fonction placeBat
 chNbCln: LDA     iterA,s     ;on retrouve chaque troisieme caractere d'une description de bateau grace a X = A * 5 + 2
-         LDX     5,i        ;
+         LDX     5,i         ;
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;
@@ -147,10 +147,10 @@ chNbCln: LDA     iterA,s     ;on retrouve chaque troisieme caractere d'une descr
          LDA     0,i
          LDBYTEA descBat,sxf
          SUBA    'A',i
-         STA     nbColnT,s    ;
-; Change le char de la rangee en sa valeur decimal et le place sur le stack pour la fonction placeBat
+         STA     nbColnT,s    
+; Change le char de la rangee en sa valeur decimal et le place sur la pile pour la fonction placeBat
          LDA     iterA,s     ;on retrouve chaque quatrieme caractere d'une description de bateau grace a X = A * 5 + 3
-         LDX     5,i        ;
+         LDX     5,i         ;
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;
@@ -158,13 +158,13 @@ chNbCln: LDA     iterA,s     ;on retrouve chaque troisieme caractere d'une descr
          LDA     0,i
          LDBYTEA descBat,sxf
          SUBA    '1',i
-         STA     nbRangeT,s  ;
-         LDA     iterA,s     ;
-         ADDA    1,i         ;
+         STA     nbRangeT,s  
+         LDA     iterA,s     
+         ADDA    1,i         
          STA     iterA,s     ;A++
          CALL    placeBat    ;tous les parametre ont ete place sur la pile, on peut appeller la fonction placeBat
-         BR      batPLoop    ;
-finBat:  ADDSP   16,i
+         BR      batPLoop    
+finBat:  ADDSP   16,i        ;libere variables locales
          RET0
 descBat: .EQUATE 0           ;contient le pointeur de l'objet du descripteur
 nbBateau:.EQUATE 2           ;le nombre de bateau valides
@@ -178,64 +178,66 @@ nbRangeT:.EQUATE 14          ;nombre rangees place en parametre par le stack pou
 
 
 ; Place un bateau dans le tableau, ne retourne rien
-; IN: Pile[10] = int nbCases 
-;     Pile[12] = char orientation
-;     Pile[14] = int colonne
-;     Pile[16] = int rangee
-placeBat:CALL    verPBat     ;verPBat(int nbCases, char orientation, int colonne, int rangee)
-         SUBSP   4,i
-         CPA     0,i
-         BREQ    finPBat 
+; IN: SP+14 = int nbCases 
+;     SP+16 = char orientation
+;     SP+18 = int colonne
+;     SP+20 = int rangee
+placeBat:CALL    verPBat     ;on verifie d'abord si le bateau peut etre place avec verPBat, la methode utilise les informations deja sur la pile
+         SUBSP   4,i         ;reserve les variables locales
+         CPA     0,i         ;
+         BREQ    finPBat     ;si la methode retourne 0, on ne place rien et quitte placeBat
          LDA     0,i
-         LDBYTEA 4,s
-         CPA     'v',i
-         BREQ    grandVer
+         LDA     16,s        ;
+         CPA     'v',i       ;regarde si on place de maniere horizontale ou verticale
+         BREQ    grandVer    ;
          LDA     0,i
          STA     iterA2,s
-loopGraH:CPA     2,s
-         BRGE    finPBat
-         LDA     8,s
-         LDX     NB_COLN,i
-         CALL    mult
-         ADDA    iterA2,s
-         ADDA    6,s
-         STA     resPTmp,s
-         LDX     resPTmp,s
-         LDBYTEA 4,s
-         STBYTEA TABLEAU,x
-         LDA     iterA2,s
-         ADDA    1,i
-         BR      loopGraH
+loopGraH:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
+         BRGE    finPBat     ;
+         LDA     20,s        ;
+         LDX     NB_COLN,i   ;
+         CALL    mult        ;
+         ADDA    iterA2,s    ;
+         ADDA    18,s        ;
+         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee, NB_COLN) + iterA2
+         LDX     resPTmp,s   ;    X = resPTmp
+         LDA     16,s        ;
+         STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
+         LDA     iterA2,s    ;
+         ADDA    1,i         ;    iterA2++
+         STA     iterA2,s    ;
+         BR      loopGraH    ;}
 grandVer:LDA     0,i
          STA     iterA2,s
-loopGraV:CPA     2,s
-         BRGE    finPBat
-         LDA     8,s
-         LDX     NB_COLN,i
-         CALL    mult
-         ADDA    6,s
-         STA     resPTmp,s
-         LDA     iterA2,s
-         CALL    mult
-         ADDA    resPTmp,s
-         STA     resPTmp,s
-         LDX     resPTmp,s
-         LDBYTEA 4,s
-         STBYTEA TABLEAU,x
-         LDA     iterA2,s
-         ADDA    1,i
-         BR      loopGraV     
-finPBat: RET4
-iterA2:  .EQUATE 0
-resPTmp: .EQUATE 2
+loopGraV:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
+         BRGE    finPBat     ;
+         LDA     20,s        ;
+         LDX     NB_COLN,i   ;
+         CALL    mult        ;
+         ADDA    18,s        ;
+         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee, NB_COLN)
+         LDA     iterA2,s    ;
+         CALL    mult        ;
+         ADDA    resPTmp,s   ;    
+         STA     resPTmp,s   ;    resPTmp += mult(iterA2, NB_COLN)
+         LDX     resPTmp,s   ;    X = resPTmp
+         LDA     16,s        ;    
+         STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
+         LDA     iterA2,s    ;
+         ADDA    1,i         ;    iterA2++
+         STA     iterA2,s    ;
+         BR      loopGraV    ;}
+finPBat: RET4                ;libere les variables locales en quittant la methode
+iterA2:  .EQUATE 0           ;contient la valeur utilise pour parcourir les boucles
+resPTmp: .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operations
 
 
 
-; Verifie si un bateau peut etre entre dans le tableau et qu'il ne rentre pas en collision avec un autre
-; IN: Stack[16] = int nbCases
-;     Stack[18] = char orientation
-;     Stack[20] = int colonne
-;     Stack[22] = int rangee
+; Verifie si un bateau peut etre entre dans le tableau en regardant sa position et s'il ne rentre pas en collision avec un autre
+; IN: SP+16 = int nbCases
+;     SP+18 = char orientation
+;     SP+20 = int colonne
+;     SP+22 = int rangee
 ; OUT: 1 par l'accumulateur si oui, 0 si non
 verPBat: SUBSP   4,i         ;reserve variables locales
          LDX     0,i
@@ -246,10 +248,10 @@ loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          LDA     18,s        ;verifie si le caractere est verticale ou horizontal
          CPA     'v',i       ;
          BREQ    VPBVert     ;
-         LDA     20,s        ;verHorsC(colonne + iterX, rangee)
+         LDA     20,s        ;
          ADDA    iterX,s     ;
          LDX     22,s        ;
-         CALL    verHorsC    ;parametres passes par indexes 
+         CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
          LDA     22,s        ;return TABLEAU[colonne + mult(rangee, NB_COLN) + iterX] != '~' 
@@ -267,10 +269,10 @@ loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          ADDX    1,i         ;X ++
          STX     iterX,s     ;
          BR      loopVPB     
-VPBVert: LDA     20,s        ;verHorsC(colonne, rangee + iterX)
+VPBVert: LDA     20,s        ;
          LDX     22,s        ;
          ADDX    1,i         ;
-         CALL    verHorsC    ;parametres passes par indexes
+         CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
          LDA     22,s        ;
@@ -295,8 +297,8 @@ placBInv:LDA     0,i         ;placement invalide, retourne 0 par l'accumulateur
          BR      finVerPB    ;
 finVerVa:LDA     1,i         ;placement valide, retourne 1 par l'accumulateur
 finVerPB:RET4
-iterX:   .EQUATE 0
-resMX:   .EQUATE 2
+iterX:   .EQUATE 0           ;utiliser pour l'index de boucle locale
+resMX:   .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operations
 
 
 
@@ -333,16 +335,16 @@ verHorsC:SUBSP   8,i
 horsC:   LDA     0,i         ;met 0 dans l'accumulateur si une comparaison a echoue.
 finVHC:  ADDSP   8,i         ;libere les variables locales
          RET0
-clnTmp:  .EQUATE 0
-rangTmp: .EQUATE 2
-resTmp1: .EQUATE 4
-resTmp2: .EQUATE 6
+clnTmp:  .EQUATE 0           ;contient la position en colonne
+rangTmp: .EQUATE 2           ;contient la position en rangee
+resTmp1: .EQUATE 4           ;utiliser pour sauvegarder des resultats d'operations
+resTmp2: .EQUATE 6           ;utiliser pour sauvegarder des resultats d'operations
 
 
 
 ; Verifie la description d'un bateau.
-; Precondition: A doit contenir l'addresse du descripteur.
-; Retourne: 0 par l'accumulateur si un bateau n'est pas conforme et 1 si oui.
+; IN: A = addresse de la description du bateau
+; OUT: 1 par l'accumulateur si le bateau est conforme, 0 si non.
 verDescB:SUBSP   4,i         ;reserve variables locales descTmp et verTmpX
          STX     verTmpX,s   ;sauvegarde X dans verTmpX
          STA     descTmp,s   ;met pointeur dans descTmp
@@ -381,14 +383,16 @@ descBatV:LDA     1,i         ;un succes de verification met 1 dans l'accumulateu
 finVerDB:LDX     verTmpX,s   ;restore la valeur d'origine a X
          ADDSP   4,i         ;libere les variables locales
          RET0
-descTmp: .EQUATE 0
-verTmpX: .EQUATE 2
+descTmp: .EQUATE 0           ;contient l'addresse
+verTmpX: .EQUATE 2           ;contient la valeur d'origine de X
 
+
+feuVolnt:CALL    printTab
 
 
 ; Lecteur de string, s'arrete lorsqu'on pese sur ENTREE.
 ; Utilise le tas pour cree le tableau
-; Retourne le pointeur du tableau par l'index
+; OUT: X = le pointeur du tableau
 creeDesc:SUBSP   2,i         ;reserve variable locale desc
          LDA     STR_LEN,i   ;passe le nombre d'octets qu'aura le tableau a new
          CALL    new         ;
@@ -405,16 +409,16 @@ loopDesc:CPX     STR_LEN,i   ;for (X = 0; X < STR_LEN; X += 2)
 descFin: LDX     desc,s      ;retourne le pointeur du tableau par X
          ADDSP   2,i         ;libere la variable locale desc
          RET0
-desc:    .EQUATE 0
+desc:    .EQUATE 0           ;contient l'addresse
 
 
 
 ; Operateur new
-; Precondition: A contient nombre d'octets
-; Postcondition: X contient un pointeur vers le tas
+; IN: A = contient nombre d'octets
+; OUT: X = contient un pointeur vers le tas
 new:     LDX     hpPtr,d  ;pointeur retourne 
-         ADDA    hpPtr,d
-         STA     hpPtr,d
+         ADDA    hpPtr,d  ;
+         STA     hpPtr,d  ;prochaine addresse 
          RET0
 hpPtr:   .ADDRSS heap
 
@@ -472,5 +476,6 @@ STR_LEN: .EQUATE 900
 ; Tableau servant au jeu
 TABLEAU: .BLOCK  162
 
+; Tas
 heap:    .BLOCK  1
          .END
