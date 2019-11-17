@@ -399,7 +399,7 @@ loopDesc:CPX     STR_LEN,i   ;for (X = 0; X < STR_LEN; X += 2)
          BRGE    descFin     ;
          CHARI   desc,sxf    ;    desc[x] = CHARI
          LDBYTEA desc,sxf    ;
-         ADDX    2,i         ;
+         ADDX    1,i         ;
          CPA     '\n',i      ;    if (X = '\n')
          BRNE    loopDesc    ;        break
 descFin: LDX     desc,s      ;retourne le pointeur du tableau par X
