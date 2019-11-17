@@ -92,9 +92,9 @@ iniVarVB:LDA     0,i         ;
 batVal:  LDA     nbBateau,s  ;la description du bateau est valide
          ADDA    1,i         ;nbBateau++
          STA     nbBateau,s  ;
-         ADDX    8,i         ;X += 4 mot
-         LDBYTEA descBat,x   ;separBat = desc[A]
-         ADDX    2,i         ;X += 1 mot
+         ADDX    4,i         ;X += 4
+         LDBYTEA descBat,sxf ;separBat = desc[A]
+         ADDX    1,i         ;X += 1
          CPA     '\n',i      ;si X += 5 != '\n' il y a au moins une autre description de bateaux
          BRNE    loopVdes    ; 
          LDA     0,i
@@ -103,13 +103,13 @@ batVal:  LDA     nbBateau,s  ;la description du bateau est valide
 batPLoop:LDA     iterA,s     ;for (A = 0; A < nbBateau; A++)
          CPA     nbBateau,s  ;
          BREQ    finBat
-         LDX     10,i         ;on retrouve chaque premier caractere d'une description de bateau grace a X = A * 5 mot
+         LDX     5,i         ;on retrouve chaque premier caractere d'une description de bateau grace a X = A * 5 mot
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;X = descBat[A*5 mot]
 ; Change le char de la grandeur en son nombre de cases relatif puis le place sur le stack pour la fonction placeBat
          LDA     0,i
-         LDBYTEA descBat,x
+         LDBYTEA descBat,sxf
          CPA     'p',i
          BREQ    nbCases1 
          CPA     'm',i
@@ -123,14 +123,14 @@ nbCases1:LDA     1,i
 nbCases3:LDA     3,i
          STA     nbCasesT,s   ;
 ; Change le char de l'orientation en un caractere plus representatif pour l'affichage dans le tableau et le place sur le stack pour la fonction placeBat
-signOrie:LDA     iterA,s     ;on retrouve chaque deuxieme caractere d'une description de bateau grace a X = A * 5 mot + 1 mot
-         LDX     10,i        ;
+signOrie:LDA     iterA,s     ;on retrouve chaque deuxieme caractere d'une description de bateau grace a X = A * 5 + 1 
+         LDX     5,i         ;
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;
-         ADDX    2,i         ;
+         ADDX    1,i         ;
          LDA     0,i
-         LDBYTEA descBat,x
+         LDBYTEA descBat,sxf
          CPA     'h',i
          BREQ    changChO
          STA     charOriT,s  ;
@@ -138,31 +138,31 @@ signOrie:LDA     iterA,s     ;on retrouve chaque deuxieme caractere d'une descri
 changChO:LDBYTEA '>',i
          STA     charOriT,s  ;
 ; Change le char de la colonne en sa valeur decimal et le place sur le stack pour la fonction placeBat
-chNbCln: LDA     iterA,s     ;on retrouve chaque troisieme caractere d'une description de bateau grace a X = A * 5 mot + 2 mot
-         LDX     10,i        ;
+chNbCln: LDA     iterA,s     ;on retrouve chaque troisieme caractere d'une description de bateau grace a X = A * 5 + 2
+         LDX     5,i        ;
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;
-         ADDX    4,i         ;
+         ADDX    2,i         ;
          LDA     0,i
-         LDBYTEA descBat,x
+         LDBYTEA descBat,sxf
          SUBA    'A',i
          STA     nbColnT,s    ;
 ; Change le char de la rangee en sa valeur decimal et le place sur le stack pour la fonction placeBat
-         LDA     iterA,s     ;on retrouve chaque quatrieme caractere d'une description de bateau grace a X = A * 5 mot + 3 mot
-         LDX     10,i        ;
+         LDA     iterA,s     ;on retrouve chaque quatrieme caractere d'une description de bateau grace a X = A * 5 + 3
+         LDX     5,i        ;
          CALL    mult        ;
          STA     resMultA,s  ;
          LDX     resMultA,s  ;
-         ADDX    6,i         ;
+         ADDX    3,i         ;
          LDA     0,i
-         LDBYTEA descBat,x
+         LDBYTEA descBat,sxf
          SUBA    '1',i
          STA     nbRangeT,s  ;
          LDA     iterA,s     ;
          ADDA    1,i         ;
          STA     iterA,s     ;A++
-         CALL    placeBat    ;tous les parametre ont ete place sur le stack, on peut appeller la fonction placeBat
+         CALL    placeBat    ;tous les parametre ont ete place sur la pile, on peut appeller la fonction placeBat
          BR      batPLoop    ;
 finBat:  ADDSP   16,i
          RET0
@@ -178,10 +178,10 @@ nbRangeT:.EQUATE 14          ;nombre rangees place en parametre par le stack pou
 
 
 ; Place un bateau dans le tableau, ne retourne rien
-; IN: Stack[10] = int nbCases 
-;     Stack[12] = char orientation
-;     Stack[14] = int colonne
-;     Stack[16] = int rangee
+; IN: Pile[10] = int nbCases 
+;     Pile[12] = char orientation
+;     Pile[14] = int colonne
+;     Pile[16] = int rangee
 placeBat:CALL    verPBat     ;verPBat(int nbCases, char orientation, int colonne, int rangee)
          SUBSP   4,i
          CPA     0,i
@@ -243,7 +243,7 @@ verPBat: SUBSP   4,i         ;reserve variables locales
 loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          CPX     16,s        ;
          BRGE    finVerVa    ;
-         LDA     18,s        ;verifie si le caractere est verticale ou horizontal
+         LDBYTEA 18,s        ;verifie si le caractere est verticale ou horizontal
          CPA     'v',i       ;
          BREQ    VPBVert     ;
          LDA     20,s        ;verHorsC(colonne + iterX, rangee)
