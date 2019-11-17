@@ -271,15 +271,18 @@ loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          BR      loopVPB     
 VPBVert: LDA     20,s        ;
          LDX     22,s        ;
-         ADDX    iterX,s     ;
-         CALL    verHorsC    ;verHorsC(colonne, rangee + iterX), parametres passes par indexes
+         ADDX    1,i         ;
+         CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
          LDA     22,s        ;
-         LDX     NB_COLN,i   ;
-         ADDX    iterX,s     ;TABLEAU[colonne + mult(rangee + iterX, NB_COLN)] != '~'
+         LDX     NB_COLN,i   ;TABLEAU[colonne + mult(rangee, NB_COLN) + mult(iterX, NB_COLN)] != '~'
          CALL    mult        ;
          ADDA    20,s        ;
+         STA     resMX,s     ;
+         LDA     iterX,s     ;
+         CALL    mult        ;
+         ADDA    resMX,s     ;
          STA     resMX,s     ;
          LDX     resMX,s     ;
          LDA     0,i         ;
@@ -449,10 +452,48 @@ rangTmp2:.EQUATE 10
 ; a ces cases.
 ; IN: A = la colonne ou on tire le feu
 ;     X = la rangee ou on tire le feu 
-tirerFeu:SUBSP
-         STA     colnTmp3,s   
+tirerFeu:SUBSP   6,i
+         STA     colnTmp3,s
+         STX     rangTmp3,s
          CALL    verHorsC
-colnTmp3:.EQUATE  0          
+         CPA     1,i
+         BRNE    finTF
+         LDA     NB_COLN,i
+         CALL    mult
+         ADDA    colnTmp3,s
+         STA     posTabT,s
+         LDX     posTabT,s
+         LDBYTEA TABLEAU,x
+         CPA     'v',i
+         BREQ    suiteTF
+         CPA     '>',i
+         BREQ    suiteTF
+         LDBYTEA '*',i
+         STBYTEA TABLEAU,x
+         LDA     colnTmp3,s
+         ADDA    1,i
+         LDX     rangTmp3,s
+         CALL    tirerFeu
+         LDA     colnTmp3,s
+         SUBA    1,i
+         LDX     rangTmp3,s
+         CALL    tirerFeu
+         LDA     colnTmp3,s
+         LDX     rangTmp3,s
+         ADDX    1,s
+         CALL    tirerFeu
+         LDA     colnTmp3,s
+         LDX     rangTmp3,s
+         SUBX    1,i
+         BR      finTF
+suiteTF: CPA     '*',i
+         BREQ    finTF
+         LDBYTEA 'o',i
+         STBYTEA TABLEAU,x
+finTF:   .RET6
+colnTmp3:.EQUATE 0
+rangTmp3:.EQUATE 2
+posTabT: .EQUATE 4
 
 
 
