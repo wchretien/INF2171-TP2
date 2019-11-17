@@ -347,7 +347,7 @@ verDescB:SUBSP   4,i         ;reserve variables locales descTmp et verTmpX
          STX     verTmpX,s   ;sauvegarde X dans verTmpX
          STA     descTmp,s   ;met pointeur dans descTmp
          LDA     0,i
-         LDBYTEA descTmp,x   ;compare la premiere lettre de la description du bateau soit la grandeur 
+         LDBYTEA descTmp,sxf ;compare la premiere lettre de la description du bateau soit la grandeur 
          CPA     'p',i       ;
          BREQ    GValide     ;
          CPA     'm',i       ;
@@ -355,21 +355,21 @@ verDescB:SUBSP   4,i         ;reserve variables locales descTmp et verTmpX
          CPA     'g',i       ;
          BREQ    GValide     ;
          BR      descBatF    ;si aucun matche, lettre invalide donc on va a descBatF
-GValide: ADDX    2,i         ;grandeur est valide, verifie maintenant la deuxieme lettre soit l'orientation
-         LDBYTEA descTmp,x   ;
+GValide: ADDX    1,i         ;grandeur est valide, verifie maintenant la deuxieme lettre soit l'orientation
+         LDBYTEA descTmp,sxf ;
          CPA     'h',i       ;
          BREQ    OValide     ;
          CPA     'v',i       ;
          BREQ    OValide     ;
          BR      descBatF    ;si aucun matche, lettre invalide donc on va a descBatF
-OValide: ADDX    2,i         ;orientation valide, verifie maintenant la troisieme lettre soit la colonne
-         LDBYTEA descTmp,x   ;
+OValide: ADDX    1,i         ;orientation valide, verifie maintenant la troisieme lettre soit la colonne
+         LDBYTEA descTmp,sxf ;
          CPA     'A',i       ;
          BRLT    descBatF    ;si descTmp[X] < 'A', la colonne est invalide
          CPA     'R',i       ;
          BRGT    descBatF    ;si descTmp[X] > 'R', la colonne est invalide
-         ADDX    2,i         ;colonne valide, verifie maintenant la quatrieme lettre soit la rangee
-         LDBYTEA descTmp,x   ;
+         ADDX    1,i         ;colonne valide, verifie maintenant la quatrieme lettre soit la rangee
+         LDBYTEA descTmp,sxf ;
          CPA     '1',i       ;
          BRLT    descBatF    ;si descTmp[X] < '1', la rangee est invalide
          CPA     '9',i       ;
