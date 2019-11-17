@@ -243,7 +243,7 @@ verPBat: SUBSP   4,i         ;reserve variables locales
 loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          CPX     16,s        ;
          BRGE    finVerVa    ;
-         LDBYTEA 18,s        ;verifie si le caractere est verticale ou horizontal
+         LDA     18,s        ;verifie si le caractere est verticale ou horizontal
          CPA     'v',i       ;
          BREQ    VPBVert     ;
          LDA     20,s        ;verHorsC(colonne + iterX, rangee)
