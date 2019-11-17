@@ -271,8 +271,8 @@ loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          BR      loopVPB     
 VPBVert: LDA     20,s        ;
          LDX     22,s        ;
-         ADDX    1,i         ;
-         CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
+         ADDX    iterX,s     ;
+         CALL    verHorsC    ;verHorsC(colonne, rangee + iterX), parametres passes par indexes
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
          LDA     22,s        ;
