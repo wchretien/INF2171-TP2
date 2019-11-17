@@ -276,13 +276,10 @@ VPBVert: LDA     20,s        ;
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
          LDA     22,s        ;
-         LDX     NB_COLN,i   ;TABLEAU[colonne + mult(rangee, NB_COLN) + mult(iterX, NB_COLN)] != '~'
+         LDX     NB_COLN,i   ;
+         ADDX    iterX,s     ;TABLEAU[colonne + mult(rangee + iterX, NB_COLN)] != '~'
          CALL    mult        ;
          ADDA    20,s        ;
-         STA     resMX,s     ;
-         LDA     iterX,s     ;
-         CALL    mult        ;
-         ADDA    resMX,s     ;
          STA     resMX,s     ;
          LDX     resMX,s     ;
          LDA     0,i         ;
