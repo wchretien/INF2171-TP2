@@ -387,7 +387,156 @@ descTmp: .EQUATE 0           ;contient l'addresse
 verTmpX: .EQUATE 2           ;contient la valeur d'origine de X
 
 
-feuVolnt:CALL    printTab
+
+; Sollicite l'utilisateur a entrer les feux a tirer sur les bateaux, jusqu'a la fin du jeu.
+feuVolnt:SUBSP   2,i         ;reserve variable locale
+         CALL    printTab    ;affiche le tableau
+         STRO    MSG_TIR,d
+         CALL    batPres     ;while(batPres){
+         CPA     0,i         ;
+         BREQ    finFVlnt    ;
+descFVol:CALL    creeDesc
+         STX     descFeu,s   ;range l'addresse dans descFeu
+         LDA     descFeu,s   ;
+         CALL    verFeuEn    ;la methode verFeuEn se sert de l'addresse de descFeu place dans A
+         CPA     1,i         ;
+         BRNE    descFVol    ;si la verification echoue on sollicite encore
+         LDA     descFeu,s   ;
+         CALL    cntNbFeu    ;la methode cntNbFeu se sert de l'addresse de descFeu place dans 
+         LDX     descFeu,s   ;
+         CALL    placeFeu    ;la methode placeFeu se sert du nombre de feux place dans A et l'addresse de descFeu place dans X 
+finFVlnt:RET2
+descFeu: .EQUATE 0           ;contient l'addresse du descripteur de feux
+
+
+
+placeFeu:SUBSP   12,i
+         STX     TDescFeu,s
+         STA     nbFeuPF,s
+         LDX     0,i
+         STX     iterX2,s
+loopPF:  CPX     nbFeuPF,s
+         BRGE    finPF
+         LDA     3,i
+         CALL    mult
+         STA     resTmpX2,s
+         LDX     resTmpX2,s
+         LDBYTEA TDescFeu,sxf
+         SUBA    'A',i
+         STA     colnTmp2,s
+         LDA     3,i
+         CALL    mult
+         ADDA    1,i
+         STA     rangTmp2,s
+         LDA     colnTmp2,s
+         LDX     rangTmp2,s
+         CALL    tirerFeu 
+         CALL    printTab
+         LDX     iterX2,s
+         ADDX    1,i
+         BR      loopPF
+finPF:   ADDSP   12,i
+         RET0
+nbFeuPF: .EQUATE 0
+TDescFeu:.EQUATE 2
+iterX2:  .EQUATE 4
+resTmpX2:.EQUATE 6
+colnTmp2:.EQUATE 8
+rangTmp2:.EQUATE 10
+
+
+
+; Tire un feu dans le tableau en changeant le caractere representat l'eau ou bateaux
+; par celui d'un feu rate ou touche. Un bateau touche par un feu cree 4 debris chacun
+; similaire a l'effet d'un feu, on utilise donc de la recursion pour creer cet effet
+; a ces cases.
+; IN: A = la colonne ou on tire le feu
+;     X = la rangee ou on tire le feu 
+tirerFeu:SUBSP
+         STA     colnTmp3,s   
+         CALL    verHorsC
+colnTmp3:.EQUATE  0          
+
+
+
+; Compte le nombre de feux dans le descripteur donne par A.
+; IN: A = l'addresse du descripteur de feux
+; OUT: A = nombre de feux dans la description
+cntNbFeu:SUBSP   4,i
+         STA     descFeuT,s
+         LDX     0,i
+         LDA     0,i
+         STA     descFeuT,s
+loopCNF: LDBYTEA descFeuT,sxf
+         CPA     '\n',i
+         BREQ    finCNFeu 
+         CPA     ' ',i
+         BREQ    nbFeuInc
+         ADDX    1,i
+         BR      loopCNF
+nbFeuInc:LDA     nbFeu,s
+         ADDA    1,i
+         STA     nbFeu,s
+         ADDX    1,i
+         BR      loopCNF
+finCNFeu:LDA     nbFeu,s
+         ADDA    1,i
+         RET4
+nbFeu:   .EQUATE 0
+descFeuT:.EQUATE 2
+
+
+
+; Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
+; C'est a dire qu'il y a un espace entre chaque descripteur de feux et que
+; la description d'un feux ait 2 caracteres valides.
+; IN: A = l'addresse du descripteur de feux
+; OUT: A = 1 si oui, 0 si non
+verFeuEn:SUBSP   2,i         ;reserve variable locale
+         LDX     0,i         ;X = 0
+         STA     descTFeu,s  ;range l'addresse du descripteur dans descTFeu
+loopSepF:LDBYTEA descTFeu,sxf;verifie si la colonne est valide
+         CPA     'A',i       ;
+         BRLT    descFeuF    ;si descTmp[X] < 'A', la colonne est invalide
+         CPA     'R',i       ;
+         BRGT    descFeuF    ;si descTmp[X] > 'R', la colonne est invalide   
+         ADDX    1,i         ;X =+ 1
+         LDBYTEA descTFeu,sxf;colonne valide, verifie maintenant la rangee
+         CPA     '1',i       ;
+         BRLT    descFeuF    ;si descTmp[X] < '1', la rangee est invalide
+         CPA     '9',i       ;
+         BRGT    descFeuF    ;si descTmp[X] > '9', la rangee est invalide
+         BR      descFeuV    ;
+descFeuF:LDA     0,i         ;un echec de verification met 0 dans l'accumulateur
+         STRO    MSG_ETIR,d
+         BR      finVFE 
+descFeuV:ADDX    1,i         ;X += 1
+         LDBYTEA descTFeu,sxf;A = X
+         ADDX    1,i         ;X += 1
+         CPA     '\n',i      ;si A != '\n' il y a au moins une autre description de feu
+         BRNE    loopSepF
+         LDA     1,i         ;un succes de verification met 1 dans l'accumulateur
+finVFE:  RET2
+descTFeu:.EQUATE 0           ;contient l'addresse du descripteur de feu
+
+
+
+; Verifie si au moins un bateau est present dans le tableau.
+; OUT: A = 1 si oui, 0 si non.
+batPres: LDA     0,i
+         LDX     0,i
+loopBatP:CPX     NB_CASES,i
+         BRGE    finBPres
+         LDBYTEA TABLEAU,x
+         CPA     'v',i
+         BREQ    batPresV
+         CPA     '>',i
+         BREQ    batPresV
+         ADDX    1,i
+         BR      loopBatP
+batPresV:LDA     1,i
+finBPres:RET0         
+
 
 
 ; Lecteur de string, s'arrete lorsqu'on pese sur ENTREE.
