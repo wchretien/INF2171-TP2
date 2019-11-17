@@ -397,8 +397,8 @@ creeDesc:SUBSP   2,i         ;reserve variable locale desc
          LDA     0,i
 loopDesc:CPX     STR_LEN,i   ;for (X = 0; X < STR_LEN; X += 2)
          BRGE    descFin     ;
-         CHARI   desc,x      ;    desc[x] = CHARI
-         LDBYTEA desc,x      ;
+         CHARI   desc,sxf    ;    desc[x] = CHARI
+         LDBYTEA desc,sxf    ;
          ADDX    2,i         ;
          CPA     '\n',i      ;    if (X = '\n')
          BRNE    loopDesc    ;        break
