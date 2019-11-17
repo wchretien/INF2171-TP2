@@ -417,7 +417,6 @@ new:     LDX     hpPtr,d  ;pointeur retourne
          STA     hpPtr,d
          RET0
 hpPtr:   .ADDRSS heap
-heap:    .BLOCK  1
 
 
 
@@ -472,4 +471,6 @@ STR_LEN: .EQUATE 900
 
 ; Tableau servant au jeu
 TABLEAU: .BLOCK  162
+
+heap:    .BLOCK  1
          .END
