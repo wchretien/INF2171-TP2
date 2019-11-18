@@ -186,7 +186,6 @@ placeBat:CALL    verPBat     ;on verifie d'abord si le bateau peut etre place av
          SUBSP   4,i         ;reserve les variables locales
          CPA     0,i         ;
          BREQ    finPBat     ;si la methode retourne 0, on ne place rien et quitte placeBat
-         LDA     0,i
          LDA     16,s        ;
          CPA     'v',i       ;regarde si on place de maniere horizontale ou verticale
          BREQ    grandVer    ;
@@ -212,14 +211,11 @@ grandVer:LDA     0,i
 loopGraV:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
          BRGE    finPBat     ;
          LDA     20,s        ;
+         ADDA    iterA2,s    ;
          LDX     NB_COLN,i   ;
          CALL    mult        ;
          ADDA    18,s        ;
-         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee, NB_COLN)
-         LDA     iterA2,s    ;
-         CALL    mult        ;
-         ADDA    resPTmp,s   ;    
-         STA     resPTmp,s   ;    resPTmp += mult(iterA2, NB_COLN)
+         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee + iterA2, NB_COLN)
          LDX     resPTmp,s   ;    X = resPTmp
          LDA     16,s        ;    
          STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
@@ -314,22 +310,11 @@ verHorsC:SUBSP   8,i
          CALL    mult        ;
          ADDA    clnTmp,s    ;
          STA     resTmp2,s   ;
-         LDA     rangTmp,s   ;return resTmp2 < mult(rangee + 1, NB_COLN)
-         ADDA    1,i         ;
+         LDA     rangTmp,s   ;On vérifie si resTmp2 < mult(rangee + 1, NB_COLN)
+         ADDA    1,i         ;Sinon, on retourne 0 dans l'accumulateur
          CALL    mult        ;
          CPA     resTmp2,s   ;
          BRLE    horsC
-         LDA     rangTmp,s   ;return resTmp2 >= mult(rangee - 1, NB_COLN)
-         SUBA    1,s         ;
-         CALL    mult        ;
-         ADDA    NB_COLN,i   ;
-         CPA     resTmp2,s   ;
-         BRGT    horsC       
-         LDA     resTmp2,s   ;return resTmp2 < NB_CASES
-         CPA     NB_CASES,i  ;
-         BRGE    horsC       
-         CPA     0,i         ;return resTmp2 >= 0
-         BRLT    horsC
          LDA     1,i         ;met 1 dans l'accumulateur si toute les comparaisons ont retournees vrai
          BR      finVHC    
 horsC:   LDA     0,i         ;met 0 dans l'accumulateur si une comparaison a echoue.
