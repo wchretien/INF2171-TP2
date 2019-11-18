@@ -397,8 +397,7 @@ feuVolnt:SUBSP   2,i         ;reserve variable locale
          BREQ    finFVlnt    ;
 descFVol:CALL    creeDesc
          STX     descFeu,s   ;range l'addresse dans descFeu
-         LDA     descFeu,s   ;
-         CALL    verFeuEn    ;la methode verFeuEn se sert de l'addresse de descFeu place dans A
+         CALL    verFeuEn    ;la methode verFeuEn se sert de l'addresse de descFeu place dans la pile
          CPA     1,i         ;
          BRNE    descFVol    ;si la verification echoue on sollicite encore
          LDA     descFeu,s   ;
@@ -528,18 +527,17 @@ descFeuT:.EQUATE 2
 ; Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
 ; C'est a dire qu'il y a un espace entre chaque descripteur de feux et que
 ; la description d'un feux ait 2 caracteres valides.
-; IN: A = l'addresse du descripteur de feux
+; IN: SP+4 = l'addresse du descripteur de feux
 ; OUT: A = 1 si oui, 0 si non
 verFeuEn:SUBSP   2,i         ;reserve variable locale
          LDX     0,i         ;X = 0
-         STA     descTFeu,s  ;range l'addresse du descripteur dans descTFeu
-loopSepF:LDA     descTFeu,sxf;verifie si la colonne est valide
+loopSepF:LDBYTEA 4,sxf       ;verifie si la colonne est valide
          CPA     'A',i       ;
          BRLT    descFeuF    ;si descTmp[X] < 'A', la colonne est invalide
          CPA     'R',i       ;
          BRGT    descFeuF    ;si descTmp[X] > 'R', la colonne est invalide   
          ADDX    1,i         ;X =+ 1
-         LDBYTEA descTFeu,sxf;colonne valide, verifie maintenant la rangee
+         LDBYTEA 4,sxf       ;colonne valide, verifie maintenant la rangee
          CPA     '1',i       ;
          BRLT    descFeuF    ;si descTmp[X] < '1', la rangee est invalide
          CPA     '9',i       ;
@@ -549,13 +547,12 @@ descFeuF:LDA     0,i         ;un echec de verification met 0 dans l'accumulateur
          STRO    MSG_ETIR,d
          BR      finVFE 
 descFeuV:ADDX    1,i         ;X += 1
-         LDBYTEA descTFeu,sxf;A = X
+         LDBYTEA 4,sxf       ;A = X 
          ADDX    1,i         ;X += 1
          CPA     '\n',i      ;si A != '\n' il y a au moins une autre description de feu
          BRNE    loopSepF
          LDA     1,i         ;un succes de verification met 1 dans l'accumulateur
 finVFE:  RET2
-descTFeu:.EQUATE 0           ;contient l'addresse du descripteur de feu
 
 
 
