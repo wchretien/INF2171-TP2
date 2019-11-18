@@ -211,14 +211,11 @@ grandVer:LDA     0,i
 loopGraV:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
          BRGE    finPBat     ;
          LDA     20,s        ;
+         ADDA    iterA2,s    ;
          LDX     NB_COLN,i   ;
          CALL    mult        ;
          ADDA    18,s        ;
-         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee, NB_COLN)
-         LDA     iterA2,s    ;
-         CALL    mult        ;
-         ADDA    resPTmp,s   ;    
-         STA     resPTmp,s   ;    resPTmp += mult(iterA2, NB_COLN)
+         STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee + iterA2, NB_COLN)
          LDX     resPTmp,s   ;    X = resPTmp
          LDA     16,s        ;    
          STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
