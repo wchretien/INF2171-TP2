@@ -186,7 +186,6 @@ placeBat:CALL    verPBat     ;on verifie d'abord si le bateau peut etre place av
          SUBSP   4,i         ;reserve les variables locales
          CPA     0,i         ;
          BREQ    finPBat     ;si la methode retourne 0, on ne place rien et quitte placeBat
-         LDA     0,i
          LDA     16,s        ;
          CPA     'v',i       ;regarde si on place de maniere horizontale ou verticale
          BREQ    grandVer    ;
