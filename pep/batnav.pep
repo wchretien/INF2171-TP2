@@ -10,7 +10,7 @@ mainLoop:CALL    initTab
          STRO    MSG_ENTR,d
          CALL    verifBat 
          CALL    feuVolnt
-         ;stro    MSG_FIN,d
+         STRO    MSG_FIN,d
          ;call    stri
          ;cpa     '\n',i
          ;breq    mainLoop
@@ -377,25 +377,26 @@ verTmpX: .EQUATE 2           ;contient la valeur d'origine de X
 feuVolnt:SUBSP   2,i         ;reserve variable locale
          CALL    printTab    ;affiche le tableau
          STRO    MSG_TIR,d
-         CALL    batPres     ;while(batPres){
+loopFeuV:CALL    batPres     ;while(batPres){
          CPA     0,i         ;
          BREQ    finFVlnt    ;
 descFVol:CALL    creeDesc
-         STX     descFeu,s   ;range l'addresse dans descFeu
-         CALL    verFeuEn    ;la methode verFeuEn se sert de l'addresse de descFeu place dans la pile
+         STX     descFeu,s   ;    range l'addresse dans descFeu
+         CALL    verFeuEn    ;    la methode verFeuEn se sert de l'addresse de descFeu place dans la pile
          CPA     1,i         ;
-         BRNE    descFVol    ;si la verification echoue on sollicite encore
-         LDA     descFeu,s   ;
-         CALL    cntNbFeu    ;la methode cntNbFeu se sert de l'addresse de descFeu place dans 
-         LDX     descFeu,s   ;
-         CALL    placeFeu    ;la methode placeFeu se sert du nombre de feux place dans A et l'addresse de descFeu place dans X 
+         BRNE    descFVol    ;    si la verification echoue on sollicite encore
+         CALL    cntNbFeu    ;    la methode cntNbFeu se sert de l'addresse de descFeu place dans la pile
+         CALL    placeFeu    ;    la methode placeFeu se sert du nombre de feux place dans A et l'addresse de descFeu place dans la pile
+         BR      loopFeuV    ;}
 finFVlnt:RET2
 descFeu: .EQUATE 0           ;contient l'addresse du descripteur de feux
 
 
 
-placeFeu:SUBSP   12,i
-         STX     TDescFeu,s
+; Place les feux specifies sur le tableau
+; IN: SP+12 = l'addresse du descripteur de feux
+;     A = nombre de feux a placer
+placeFeu:SUBSP   10,i
          STA     nbFeuPF,s
          LDX     0,i
          STX     iterX2,s
@@ -405,12 +406,17 @@ loopPF:  CPX     nbFeuPF,s
          CALL    mult
          STA     resTmpX2,s
          LDX     resTmpX2,s
-         LDBYTEA TDescFeu,sxf
+         LDBYTEA 12,sxf
          SUBA    'A',i
          STA     colnTmp2,s
          LDA     3,i
+         LDX     iterX2,s
          CALL    mult
          ADDA    1,i
+         STA     resTmpX2,s
+         LDX     resTmpX2,s
+         LDBYTEA 12,sxf
+         SUBA    '1',i
          STA     rangTmp2,s
          LDA     colnTmp2,s
          LDX     rangTmp2,s
@@ -419,14 +425,13 @@ loopPF:  CPX     nbFeuPF,s
          LDX     iterX2,s
          ADDX    1,i
          BR      loopPF
-finPF:   ADDSP   12,i
+finPF:   ADDSP   10,i
          RET0
 nbFeuPF: .EQUATE 0
-TDescFeu:.EQUATE 2
-iterX2:  .EQUATE 4
-resTmpX2:.EQUATE 6
-colnTmp2:.EQUATE 8
-rangTmp2:.EQUATE 10
+iterX2:  .EQUATE 2
+resTmpX2:.EQUATE 4
+colnTmp2:.EQUATE 6
+rangTmp2:.EQUATE 8
 
 
 
@@ -442,6 +447,7 @@ tirerFeu:SUBSP   6,i
          CALL    verHorsC
          CPA     1,i
          BRNE    finTF
+         LDX     rangTmp3,s
          LDA     NB_COLN,i
          CALL    mult
          ADDA    colnTmp3,s
@@ -452,7 +458,12 @@ tirerFeu:SUBSP   6,i
          BREQ    suiteTF
          CPA     '>',i
          BREQ    suiteTF
-         LDBYTEA '*',i
+         CPA     '*',i
+         BREQ    finTF
+         LDBYTEA 'o',i
+         STBYTEA TABLEAU,x
+         BR      finTF 
+suiteTF: LDBYTEA '*',i
          STBYTEA TABLEAU,x
          LDA     colnTmp3,s
          ADDA    1,i
@@ -470,10 +481,6 @@ tirerFeu:SUBSP   6,i
          LDX     rangTmp3,s
          SUBX    1,i
          BR      finTF
-suiteTF: CPA     '*',i
-         BREQ    finTF
-         LDBYTEA 'o',i
-         STBYTEA TABLEAU,x
 finTF:   RET6 
 colnTmp3:.EQUATE 0
 rangTmp3:.EQUATE 2
@@ -482,14 +489,13 @@ posTabT: .EQUATE 4
 
 
 ; Compte le nombre de feux dans le descripteur donne par A.
-; IN: A = l'addresse du descripteur de feux
+; IN: SP+4 = l'addresse du descripteur de feux
 ; OUT: A = nombre de feux dans la description
-cntNbFeu:SUBSP   4,i
-         STA     descFeuT,s
+cntNbFeu:SUBSP   2,i
          LDX     0,i
          LDA     0,i
-         STA     descFeuT,s
-loopCNF: LDBYTEA descFeuT,sxf
+         STA     nbFeu,s
+loopCNF: LDBYTEA 4,sxf
          CPA     '\n',i
          BREQ    finCNFeu 
          CPA     ' ',i
@@ -503,9 +509,8 @@ nbFeuInc:LDA     nbFeu,s
          BR      loopCNF
 finCNFeu:LDA     nbFeu,s
          ADDA    1,i
-         RET4
+         RET2
 nbFeu:   .EQUATE 0
-descFeuT:.EQUATE 2
 
 
 
