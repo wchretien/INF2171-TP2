@@ -310,22 +310,11 @@ verHorsC:SUBSP   8,i
          CALL    mult        ;
          ADDA    clnTmp,s    ;
          STA     resTmp2,s   ;
-         LDA     rangTmp,s   ;return resTmp2 < mult(rangee + 1, NB_COLN)
-         ADDA    1,i         ;
+         LDA     rangTmp,s   ;On vérifie si resTmp2 < mult(rangee + 1, NB_COLN)
+         ADDA    1,i         ;Sinon, on retourne 0 dans l'accumulateur
          CALL    mult        ;
          CPA     resTmp2,s   ;
          BRLE    horsC
-         LDA     rangTmp,s   ;return resTmp2 >= mult(rangee - 1, NB_COLN)
-         SUBA    1,s         ;
-         CALL    mult        ;
-         ADDA    NB_COLN,i   ;
-         CPA     resTmp2,s   ;
-         BRGT    horsC       
-         LDA     resTmp2,s   ;return resTmp2 < NB_CASES
-         CPA     NB_CASES,i  ;
-         BRGE    horsC       
-         CPA     0,i         ;return resTmp2 >= 0
-         BRLT    horsC
          LDA     1,i         ;met 1 dans l'accumulateur si toute les comparaisons ont retournees vrai
          BR      finVHC    
 horsC:   LDA     0,i         ;met 0 dans l'accumulateur si une comparaison a echoue.
