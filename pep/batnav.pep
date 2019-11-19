@@ -554,9 +554,9 @@ finVFE:  RET2
 
 ; Verifie si au moins un bateau est present dans le tableau.
 ; OUT: A = 1 si oui, 0 si non.
-batPres: LDA     0,i
-         LDX     0,i
-loopBatP:CPX     NB_CASES,i
+batPres: LDX     0,i
+loopBatP:LDA     0,i
+         CPX     NB_CASES,i
          BRGE    finBPres
          LDBYTEA TABLEAU,x
          CPA     'v',i
