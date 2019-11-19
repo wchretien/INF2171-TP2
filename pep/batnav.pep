@@ -11,9 +11,9 @@ mainLoop:CALL    initTab
          CALL    verifBat 
          CALL    feuVolnt
          STRO    MSG_FIN,d
-         ;call    stri
-         ;cpa     '\n',i
-         ;breq    mainLoop
+         CALL    stri
+         CPA     '\n',i
+         BREQ    mainLoop
          STOP
 
 
@@ -491,26 +491,26 @@ posTabT: .EQUATE 4
 ; Compte le nombre de feux dans le descripteur donne par A.
 ; IN: SP+4 = l'addresse du descripteur de feux
 ; OUT: A = nombre de feux dans la description
-cntNbFeu:SUBSP   2,i
+cntNbFeu:SUBSP   2,i         ;reserve variable locale
          LDX     0,i
          LDA     0,i
          STA     nbFeu,s
-loopCNF: LDBYTEA 4,sxf
-         CPA     '\n',i
-         BREQ    finCNFeu 
-         CPA     ' ',i
-         BREQ    nbFeuInc
-         ADDX    1,i
-         BR      loopCNF
-nbFeuInc:LDA     nbFeu,s
-         ADDA    1,i
-         STA     nbFeu,s
-         ADDX    1,i
-         BR      loopCNF
-finCNFeu:LDA     nbFeu,s
-         ADDA    1,i
-         RET2
-nbFeu:   .EQUATE 0
+loopCNF: LDBYTEA 4,sxf       ;while (descripteurFeux[x] != '\n') {
+         CPA     '\n',i      ;
+         BREQ    finCNFeu    ;
+         CPA     ' ',i       ;    if (descripteurFeux[x] == ' '){
+         BREQ    nbFeuInc    ;        nbFeu++
+         ADDX    1,i         ;    }
+         BR      loopCNF     ;}
+nbFeuInc:LDA     nbFeu,s     ;incrementation de nbFeu
+         ADDA    1,i         ;
+         STA     nbFeu,s     ;
+         ADDX    1,i         ;
+         BR      loopCNF     ;retourne au debut de while
+finCNFeu:LDA     nbFeu,s     ;
+         ADDA    1,i         ;return nombre d'espaces + 1
+         RET2                ;
+nbFeu:   .EQUATE 0           ;contient le nombre de feu du descripteur de feux
 
 
 
