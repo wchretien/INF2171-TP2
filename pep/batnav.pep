@@ -18,6 +18,7 @@ mainLoop:SUBSP   2,i
          LDBYTEA descLTmp,sxf
          CPA     '\n',i
          BREQ    mainLoop
+         STRO    MSG_BYE,d 
          STOP
 descLTmp:.EQUATE 0
 
