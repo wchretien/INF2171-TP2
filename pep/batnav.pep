@@ -4,18 +4,22 @@
 ;
 ; Auteur: Wiliam Chretien,        Code permanent: CHRW15109406
 ; Auteur: Ricardo Ruy Valle-Mena, Code permanent: VALR29129407
-mainLoop:CALL    initTab
+mainLoop:SUBSP   2,i
+         CALL    initTab
          STRO    MSG_BIEN,d
          CALL    printTab
          STRO    MSG_ENTR,d
          CALL    verifBat 
          CALL    feuVolnt
          STRO    MSG_FIN,d
-         CALL    stri
+         CALL    creeDesc
+         STX     descLTmp,s
+         LDX     0,i
+         LDBYTEA descLTmp,sxf
          CPA     '\n',i
          BREQ    mainLoop
          STOP
-
+descLTmp:.EQUATE 0
 
 
 ; Initialise le tableau
