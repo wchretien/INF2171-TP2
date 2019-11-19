@@ -4,8 +4,10 @@
 ;
 ; Auteur: Wiliam Chretien,        Code permanent: CHRW15109406
 ; Auteur: Ricardo Ruy Valle-Mena, Code permanent: VALR29129407
-mainLoop:SUBSP   2,i
-         CALL    initTab
+;
+; Controle l'operation du programme.
+mainLoop:SUBSP   2,i         ;reserve variable locale
+         CALL    initTab     
          STRO    MSG_BIEN,d
          CALL    printTab
          STRO    MSG_ENTR,d
@@ -20,7 +22,7 @@ mainLoop:SUBSP   2,i
          BREQ    mainLoop
          STRO    MSG_BYE,d 
          STOP
-descLTmp:.EQUATE 0
+descLTmp:.EQUATE 0           ;contient pointeur du descripteur cree lors d'une sollicitation d'une nouvelle partie
 
 
 ; Initialise le tableau
@@ -61,22 +63,19 @@ PTLoopCl:CPA     NB_COLN,i   ;for (A=0; A <= 18; A++)
          STA     PTTmpM,s    ;
          LDX     PTTmpM,s    ;X = A
          CHARO   TABLEAU,x   ;print(TABLEAU[X])
-         LDA     PTTmpA,s    ;restore les valeurs d'origine a A et X
+         LDA     PTTmpA,s    ;
          LDX     PTTmpX,s    ;
-         ADDA    1,i         
+         ADDA    1,i         ;A++
          BR      PTLoopCl
 finCl:   CHARO   '|',i       ;la rangee a ete imprimer au complet, on incremente X pour passer a la prochaine
-         ADDX    1,i
+         ADDX    1,i         ;
          BR      PTLoopRn  
 PTFin:   ADDSP   8,i
          RET0
-; utilise pour sauvegarder et restaurer l'indexe et l'accumulateur
-PTTmpA:  .EQUATE 0
-PTTmpX:  .EQUATE 2
-; utilise pour calculer la multiplication
-PTTmpM:  .EQUATE 4
-; garde la valeur de la rangee a laquelle on est, pour l'imprimer
-PTRangee:.EQUATE 6
+PTTmpA:  .EQUATE 0           ;contient la valeur de l'index utilise avec A
+PTTmpX:  .EQUATE 2           ;contient la valeur 
+PTTmpM:  .EQUATE 4           ;utilise pour calculer la multiplication
+PTRangee:.EQUATE 6           ;garde la valeur de la rangee a laquelle on est, pour l'imprimer
 
 
 
