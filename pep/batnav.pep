@@ -309,6 +309,10 @@ resMX:   .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operatio
 verHorsC:SUBSP   8,i
          STA     clnTmp,s
          STX     rangTmp,s
+         CPA     0,i         ;
+         BRLT    horsC       ;A et X doivent être positifs
+         CPX     0,i         ;
+         BRLT    horsC       ;
          LDX     NB_COLN,i   ;resTmp2 = mult(rangee, NB_COLN) + colonne
          LDA     rangTmp,s
          CALL    mult        ;
@@ -634,7 +638,7 @@ MSG_ENTR:.ASCII  "Entrer la description et la position des bateaux\n"
          .ASCII  "selon le format suivant, separes par des espaces:\n"
          .ASCII  "taille[p/m/g] orientation[h/v] colonne [A-R] rangee[1-9]\n"
          .ASCII  "ex: ghC4 mvM2 phK9\n\x00"
-MSG_TIR: .ASCII  "Feu a volonote!\n(entrer les coups a tirer: colonne[A-R] "
+MSG_TIR: .ASCII  "Feu a volonte!\n(entrer les coups a tirer: colonne[A-R] "
          .ASCII  "rangee [1-9])\nex: A3 I5 M3\n\x00"
 MSG_FIN: .ASCII  "Vous avez aneanti la flotte!\nAppuyer sur <Enter> pour jouer "
          .ASCII  "a nouveau ou\nn'importe quelle autre saisie pour quitter.\n\x00"
