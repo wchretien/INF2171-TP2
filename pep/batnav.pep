@@ -310,6 +310,10 @@ resMX:   .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operatio
 verHorsC:SUBSP   8,i
          STA     clnTmp,s
          STX     rangTmp,s
+         CPA     0,i         ;
+         BRLT    horsC       ;A et X doivent être positifs
+         CPX     0,i         ;
+         BRLT    horsC       ;
          LDX     NB_COLN,i   ;resTmp2 = mult(rangee, NB_COLN) + colonne
          LDA     rangTmp,s
          CALL    mult        ;
