@@ -475,11 +475,12 @@ suiteTF: LDBYTEA '*',i
          CALL    tirerFeu
          LDA     colnTmp3,s
          LDX     rangTmp3,s
-         ADDX    1,s
+         ADDX    1,i
          CALL    tirerFeu
          LDA     colnTmp3,s
          LDX     rangTmp3,s
          SUBX    1,i
+         CALL    tirerFeu
          BR      finTF
 finTF:   RET6 
 colnTmp3:.EQUATE 0
