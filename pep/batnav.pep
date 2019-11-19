@@ -190,21 +190,21 @@ placeBat:CALL    verPBat     ;on verifie d'abord si le bateau peut etre place av
          SUBSP   4,i         ;reserve les variables locales
          CPA     0,i         ;
          BREQ    finPBat     ;si la methode retourne 0, on ne place rien et quitte placeBat
-         LDA     16,s        ;
+         LDA     pbOri,s     ;
          CPA     'v',i       ;regarde si on place de maniere horizontale ou verticale
          BREQ    grandVer    ;
          LDA     0,i
          STA     iterA2,s
-loopGraH:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
+loopGraH:CPA     pbNbCas,s   ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
          BRGE    finPBat     ;
-         LDA     20,s        ;
+         LDA     pbRang,s    ;
          LDX     NB_COLN,i   ;
          CALL    mult        ;
          ADDA    iterA2,s    ;
-         ADDA    18,s        ;
+         ADDA    pbColn,s    ;
          STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee, NB_COLN) + iterA2
          LDX     resPTmp,s   ;    X = resPTmp
-         LDA     16,s        ;
+         LDA     pbOri,s     ;
          STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
          LDA     iterA2,s    ;
          ADDA    1,i         ;    iterA2++
@@ -212,16 +212,16 @@ loopGraH:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
          BR      loopGraH    ;}
 grandVer:LDA     0,i
          STA     iterA2,s
-loopGraV:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
+loopGraV:CPA     pbNbCas,s   ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
          BRGE    finPBat     ;
-         LDA     20,s        ;
+         LDA     pbRang,s    ;
          ADDA    iterA2,s    ;
          LDX     NB_COLN,i   ;
          CALL    mult        ;
-         ADDA    18,s        ;
+         ADDA    pbColn,s    ;
          STA     resPTmp,s   ;    resPTmp = colonne + mult(rangee + iterA2, NB_COLN)
          LDX     resPTmp,s   ;    X = resPTmp
-         LDA     16,s        ;    
+         LDA     pbOri,s     ;
          STBYTEA TABLEAU,x   ;    TABLEAU[X] = char orientation
          LDA     iterA2,s    ;
          ADDA    1,i         ;    iterA2++
@@ -230,6 +230,10 @@ loopGraV:CPA     14,s        ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
 finPBat: RET4                ;libere les variables locales en quittant la methode
 iterA2:  .EQUATE 0           ;contient la valeur utilise pour parcourir les boucles
 resPTmp: .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operations
+pbNbCas: .EQUATE 14          ;position en mémoire du noombre de cases relatif au SP
+pbOri:   .EQUATE 16          ;position en mémoire de l'orientation relatif au SP
+pbColn:  .EQUATE 18          ;position en mémoire de la colonne relatif au SP
+pbRang:  .EQUATE 20          ;position en mémoire de la rangée relatif au SP
 
 
 
