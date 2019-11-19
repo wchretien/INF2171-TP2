@@ -480,6 +480,7 @@ suiteTF: LDBYTEA '*',i
          LDA     colnTmp3,s
          LDX     rangTmp3,s
          SUBX    1,i
+         CALL    tirerFeu
          BR      finTF
 finTF:   RET6 
 colnTmp3:.EQUATE 0
