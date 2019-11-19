@@ -424,6 +424,7 @@ loopPF:  CPX     nbFeuPF,s
          CALL    printTab
          LDX     iterX2,s
          ADDX    1,i
+         STX     iterX2,s
          BR      loopPF
 finPF:   ADDSP   10,i
          RET0
