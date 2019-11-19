@@ -475,7 +475,7 @@ suiteTF: LDBYTEA '*',i
          CALL    tirerFeu
          LDA     colnTmp3,s
          LDX     rangTmp3,s
-         ADDX    1,s
+         ADDX    1,i
          CALL    tirerFeu
          LDA     colnTmp3,s
          LDX     rangTmp3,s
