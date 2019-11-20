@@ -539,13 +539,13 @@ nbFeu:   .EQUATE 0           ;contient le nombre de feu du descripteur de feux
 ; OUT: A = 1 si oui, 0 si non
 verFeuEn:SUBSP   2,i         ;reserve variable locale
          LDX     0,i         ;X = 0
-loopSepF:LDBYTEA 4,sxf       ;verifie si la colonne est valide
+loopSepF:LDBYTEA vfeDesc,sxf ;verifie si la colonne est valide
          CPA     'A',i       ;
          BRLT    descFeuF    ;si descTmp[X] < 'A', la colonne est invalide
          CPA     'R',i       ;
          BRGT    descFeuF    ;si descTmp[X] > 'R', la colonne est invalide   
          ADDX    1,i         ;X =+ 1
-         LDBYTEA 4,sxf       ;colonne valide, verifie maintenant la rangee
+         LDBYTEA vfeDesc,sxf ;colonne valide, verifie maintenant la rangee
          CPA     '1',i       ;
          BRLT    descFeuF    ;si descTmp[X] < '1', la rangee est invalide
          CPA     '9',i       ;
@@ -555,12 +555,13 @@ descFeuF:LDA     0,i         ;un echec de verification met 0 dans l'accumulateur
          STRO    MSG_ETIR,d
          BR      finVFE 
 descFeuV:ADDX    1,i         ;X += 1
-         LDBYTEA 4,sxf       ;A = X 
+         LDBYTEA vfeDesc,sxf ;A = X
          ADDX    1,i         ;X += 1
          CPA     '\n',i      ;si A != '\n' il y a au moins une autre description de feu
          BRNE    loopSepF
          LDA     1,i         ;un succes de verification met 1 dans l'accumulateur
 finVFE:  RET2
+vfeDesc: .EQUATE 4           ;position en mémoire du descripteur de feux relaitif au SP
 
 
 
