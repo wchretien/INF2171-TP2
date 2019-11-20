@@ -527,7 +527,7 @@ nbFeu:   .EQUATE 0           ;contient le nombre de feu du descripteur de feux
 ; IN: SP+2 = l'addresse du descripteur de feux.
 ; OUT: A = 1 si oui, 0 si non.
 verFeuEn:LDX     0,i         ;X = 0
-loopSepF:LDBYTEA 4,sxf       ;A = descripteur de feux [X]
+loopSepF:LDBYTEA 2,sxf       ;A = descripteur de feux [X]
          CPA     'A',i       ;
          BRLT    descFeuF    ;si descTmp[X] < 'A', la colonne est invalide
          CPA     'R',i       ;
