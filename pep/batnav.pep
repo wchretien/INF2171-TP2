@@ -307,7 +307,7 @@ resMX:   .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operatio
 verHorsC:SUBSP   8,i         ;reserve variables locales
          STA     clnTmp,s
          STX     rangTmp,s
-         CPA     0,i         ;A et X doivent être positifs
+         CPA     0,i         ;A et X doivent etre positifs
          BRLT    horsC       ;
          CPX     0,i         ;
          BRLT    horsC       ;
@@ -316,11 +316,11 @@ verHorsC:SUBSP   8,i         ;reserve variables locales
          CALL    mult        ;
          ADDA    clnTmp,s    ;
          STA     resTmp2,s   ;resTmp2 = mult(rangee, NB_COLN) + colonne
-         LDA     rangTmp,s   ;On vérifie si resTmp2 < mult(rangee + 1, NB_COLN)
+         LDA     rangTmp,s   ;On verifie si resTmp2 < mult(rangee + 1, NB_COLN)
          ADDA    1,i         ;
          CALL    mult        ;
          CPA     resTmp2,s   ;
-         BRLE    horsC       ;Sinon, on retourne 0 dans l'accumulateur
+         BRLE    horsC       ;sinon, on retourne 0 dans l'accumulateur
          LDA     1,i         ;met 1 dans l'accumulateur si toute les comparaisons ont retournees vrai
          BR      finVHC    
 horsC:   LDA     0,i         ;met 0 dans l'accumulateur si une comparaison a echoue.
@@ -524,7 +524,7 @@ nbFeu:   .EQUATE 0           ;contient le nombre de feu du descripteur de feux
 ; Verifie que les feux entres par l'utilisateur sont conformes a l'enonce.
 ; C'est a dire qu'il y a un espace entre chaque descripteur de feux et que
 ; la description d'un feux ait 2 caracteres valides.
-; IN: SP+4 = l'addresse du descripteur de feux.
+; IN: SP+2 = l'addresse du descripteur de feux.
 ; OUT: A = 1 si oui, 0 si non.
 verFeuEn:LDX     0,i         ;X = 0
 loopSepF:LDBYTEA 4,sxf       ;A = descripteur de feux [X]
@@ -533,7 +533,7 @@ loopSepF:LDBYTEA 4,sxf       ;A = descripteur de feux [X]
          CPA     'R',i       ;
          BRGT    descFeuF    ;si descTmp[X] > 'R', la colonne est invalide   
          ADDX    1,i         ;X =+ 1
-         LDBYTEA 4,sxf       ;A = descripteur de feux [X]
+         LDBYTEA 2,sxf       ;A = descripteur de feux [X]
          CPA     '1',i       ;
          BRLT    descFeuF    ;si descTmp[X] < '1', la rangee est invalide
          CPA     '9',i       ;
@@ -543,12 +543,12 @@ descFeuF:LDA     0,i         ;un echec de verification met 0 dans l'accumulateur
          STRO    MSG_ETIR,d  ;
          BR      finVFE      ;
 descFeuV:ADDX    1,i         ;X += 1
-         LDBYTEA 4,sxf       ;A = descripteur de feux [X] 
+         LDBYTEA 2,sxf       ;A = descripteur de feux [X] 
          ADDX    1,i         ;X += 1
          CPA     '\n',i      ;si A != '\n' il y a au moins une autre description de feu
          BRNE    loopSepF    ;
-         LDA     1,i         ;un succes de verification met 1 dans l'accumulateur
-finVFE:  RET0                
+         LDA     1,i         ;un succes de verification met 1 dans l'accumulateur et quitte
+finVFE:  RET0                ;
 
 
 
