@@ -448,7 +448,7 @@ iterX2:  .EQUATE 2
 resTmpX2:.EQUATE 4
 colnTmp2:.EQUATE 6
 rangTmp2:.EQUATE 8
-pfDesc:  .EQUATE 12
+pfDesc:  .EQUATE 12          ;position en mémoire du descripteur de feux relatif au SP
 
 
 
