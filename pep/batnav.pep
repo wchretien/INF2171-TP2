@@ -247,21 +247,21 @@ verPBat: SUBSP   4,i         ;reserve variables locales
          LDX     0,i
          STX     iterX,s
 loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
-         CPX     16,s        ;
+         CPX     vpbCas,s    ;
          BRGE    finVerVa    ;
-         LDA     18,s        ;verifie si le caractere est verticale ou horizontal
+         LDA     vpbOri,s    ;verifie si le caractere est verticale ou horizontal
          CPA     'v',i       ;
          BREQ    VPBVert     ;
-         LDA     20,s        ;
+         LDA     vpbColn,s   ;
          ADDA    iterX,s     ;
-         LDX     22,s        ;
+         LDX     vpbRang,s   ;
          CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
-         LDA     22,s        ;return TABLEAU[colonne + mult(rangee, NB_COLN) + iterX] != '~' 
+         LDA     vpbRang,s   ;return TABLEAU[colonne + mult(rangee, NB_COLN) + iterX] != '~'
          LDX     NB_COLN,i   ;
          CALL    mult        ;
-         ADDA    20,s        ;
+         ADDA    vpbColn,s   ;
          ADDA    iterX,s     ;
          STA     resMX,s     ;
          LDX     resMX,s     ;
@@ -273,16 +273,16 @@ loopVPB: LDX     iterX,s     ;for (X = 0; X < nbCases; X++)
          ADDX    1,i         ;X ++
          STX     iterX,s     ;
          BR      loopVPB     
-VPBVert: LDA     20,s        ;
-         LDX     22,s        ;
+VPBVert: LDA     vpbColn,s   ;
+         LDX     vpbRang,s   ;
          ADDX    1,i         ;
          CALL    verHorsC    ;verHorsC(colonne + iterX, rangee), parametres passes par indexes 
          CPA     0,i         ;
          BREQ    placBInv    ;si verHorsC retourne 0 alors placement invalide
-         LDA     22,s        ;
+         LDA     vpbRang,s   ;
          LDX     NB_COLN,i   ;TABLEAU[colonne + mult(rangee, NB_COLN) + mult(iterX, NB_COLN)] != '~'
          CALL    mult        ;
-         ADDA    20,s        ;
+         ADDA    vpbColn,s   ;
          STA     resMX,s     ;
          LDA     iterX,s     ;
          CALL    mult        ;
@@ -303,7 +303,10 @@ finVerVa:LDA     1,i         ;placement valide, retourne 1 par l'accumulateur
 finVerPB:RET4
 iterX:   .EQUATE 0           ;utiliser pour l'index de boucle locale
 resMX:   .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operations
-
+vpbCas:  .EQUATE 16          ;position en mémoire du nombre de cases relatif au SP
+vpbOri:  .EQUATE 18          ;position en mémoire de l'orientation reltatif au SP
+vpbColn: .EQUATE 20          ;position en mémoire de la colonne relatif au SP
+vpbRang: .EQUATE 22          ;position en mémoire de la rangée relatif au SP
 
 
 ; Verifie si une position colonne/rangee est a l'interieur du jeu.
