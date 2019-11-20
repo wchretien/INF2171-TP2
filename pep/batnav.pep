@@ -421,7 +421,7 @@ loopPF:  CPX     nbFeuPF,s
          CALL    mult
          STA     resTmpX2,s
          LDX     resTmpX2,s
-         LDBYTEA 12,sxf
+         LDBYTEA pfDesc,sxf
          SUBA    'A',i
          STA     colnTmp2,s
          LDA     3,i
@@ -430,7 +430,7 @@ loopPF:  CPX     nbFeuPF,s
          ADDA    1,i
          STA     resTmpX2,s
          LDX     resTmpX2,s
-         LDBYTEA 12,sxf
+         LDBYTEA pfDesc,sxf
          SUBA    '1',i
          STA     rangTmp2,s
          LDA     colnTmp2,s
@@ -448,6 +448,7 @@ iterX2:  .EQUATE 2
 resTmpX2:.EQUATE 4
 colnTmp2:.EQUATE 6
 rangTmp2:.EQUATE 8
+pfDesc:  .EQUATE 12
 
 
 
