@@ -230,7 +230,7 @@ loopGraV:CPA     pbNbCas,s   ;for (iterA2 = 0; iterA2 < nbCases; iterA2++){
 finPBat: RET4                ;libere les variables locales en quittant la methode
 iterA2:  .EQUATE 0           ;contient la valeur utilise pour parcourir les boucles
 resPTmp: .EQUATE 2           ;utiliser pour sauvegarder des resultats d'operations
-pbNbCas: .EQUATE 14          ;position en mémoire du noombre de cases relatif au SP
+pbNbCas: .EQUATE 14          ;position en mémoire du nombre de cases relatif au SP
 pbOri:   .EQUATE 16          ;position en mémoire de l'orientation relatif au SP
 pbColn:  .EQUATE 18          ;position en mémoire de la colonne relatif au SP
 pbRang:  .EQUATE 20          ;position en mémoire de la rangée relatif au SP
